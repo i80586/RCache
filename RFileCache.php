@@ -1,5 +1,7 @@
 <?php
 
+namespace RLibrary;
+
 /**
  * Class RFileCache
  * Simple class for file caching
