@@ -14,7 +14,12 @@ class RFileCache
     /**
      * Error constants
      */
-    const ERR_DIR_NOT_EXISTS = 1;
+    const ERR_DIR_NOT_EXISTS=1;
+    
+    /**
+     * Default expire time (one hour)
+     */
+    const DEFAULT_EXPIRE_TIME=3600;
     
     /**
      * Cache folder
@@ -29,7 +34,7 @@ class RFileCache
     public function __construct($cacheDir)
     {
 	$this->setCacheDir($cacheDir);
-	$this->removeExpiredFile();
+	$this->removeExpiredFiles();
     }
     
     /**
@@ -50,7 +55,7 @@ class RFileCache
     {
 	$this->cacheDir=($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
 	if(!is_dir($this->cacheDir))
-	    throw new Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
+	    throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
     }
         
     /**
@@ -63,10 +68,13 @@ class RFileCache
 	$dirHandler=opendir($this->cacheDir);
 	while(($file=readdir($dirHandler)) !== false)
 	{
-	    $fileLastModified=filemtime($this->cacheDir . $file);
-	    
-	    if($fileLastModified > $currDate)
-		unlink($this->cacheDir . $file);
+	    if(is_file($this->cacheDir . $file))
+	    {
+		$fileLastModified=filemtime($this->cacheDir . $file);
+
+		if(($currDate - $fileLastModified) >= self::DEFAULT_EXPIRE_TIME)
+		    unlink($this->cacheDir . $file);
+	    }
 	}
     }
 }
