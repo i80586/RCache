@@ -23,7 +23,6 @@ class RFileCache
     /**
      * Class constructor
      * @param string $cacheFolder
-     * @throws Exception
      */
     public function __construct($cacheDir)
     {
@@ -43,6 +42,7 @@ class RFileCache
     /**
      * Sets cache dir
      * @param string $dir
+     * @throws Exception
      */
     public function setCacheDir($dir)
     {
