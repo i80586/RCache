@@ -15,7 +15,9 @@ class RFileCache
 	 * Error constants
 	 */
 	const ERR_DIR_NOT_EXISTS=1;
-
+	const ERR_EMPTY_DURATION=2;
+	const ERR_EMPTY_IDENTIFIER=3;
+	
 	/**
 	 * Cache folder
 	 * @property string 
@@ -43,16 +45,6 @@ class RFileCache
 	{
 		$this->setCacheDir($cacheDir);
 		$this->expire=$expire;
-	}
-
-	/**
-	 * Catch undefined property and
-	 * set current cache identifier
-	 * @param string $name
-	 */
-	public function __get($name)
-	{
-		$this->cacheIdentifier=$name;
 	}
 
 	/**
@@ -86,6 +78,28 @@ class RFileCache
 	private function generateCacheHash($identifier, $expire)
 	{
 		return md5($identifier) . '-' . base64_encode($expire);
+	}
+	
+	/**
+	 * Load data from cache
+	 * @param string $identifier
+	 * @param mixed $data
+	 * @param integer $duration
+	 * @throws \Exception
+	 */
+	public function load($identifier, $data, $duration=null)
+	{	
+		if(null === $identifier)
+			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+			
+		$cacheDuration=null === $duration ? $this->expire : $duration;
+		if(empty($cacheDuration))
+			throw new \Exception('Cache duration is not set', self::ERR_EMPTY_DURATION);
+		
+		$cacheHash=$this->generateCacheHash($identifier, $cacheDuration);
+				
+		// ....
+		// ...
 	}
 	
 }
