@@ -16,7 +16,6 @@ class RFileCache
 	 */
 	const ERR_DIR_NOT_EXISTS=1;
 	const ERR_EMPTY_DURATION=2;
-	const ERR_EMPTY_IDENTIFIER=3;
 	
 	/**
 	 * Cache folder
@@ -29,7 +28,7 @@ class RFileCache
 	 * As seconds
 	 * @property integer 
 	 */
-	private $expire=null;
+	private $expire=0;
 
 	/**
 	 * Current cache identifier
@@ -41,7 +40,7 @@ class RFileCache
 	 * Class constructor
 	 * @param string $cacheFolder
 	 */
-	public function __construct($cacheDir, $expire=null)
+	public function __construct($cacheDir, $expire=0)
 	{
 		$this->setCacheDir($cacheDir);
 		$this->expire=$expire;
@@ -81,25 +80,74 @@ class RFileCache
 	}
 	
 	/**
-	 * Load data from cache
+	 * Save data in cache
 	 * @param string $identifier
 	 * @param mixed $data
 	 * @param integer $duration
 	 * @throws \Exception
 	 */
-	public function load($identifier, $data, $duration=null)
-	{	
-		if(null === $identifier)
+	public function set($identifier, $data)
+	{
+		if(empty($identifier))
 			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-			
-		$cacheDuration=null === $duration ? $this->expire : $duration;
-		if(empty($cacheDuration))
-			throw new \Exception('Cache duration is not set', self::ERR_EMPTY_DURATION);
 		
-		$cacheHash=$this->generateCacheHash($identifier, $cacheDuration);
-				
-		// ....
-		// ...
+		$cacheHash=$this->generateCacheHash($identifier, $this->expire);
+		$this->writeData($this->cacheDir . $cacheHash, serialize($data));
+	}
+	
+	/**
+	 * Load data
+	 * @param string $identifier
+	 * @return mixed
+	 */
+	public function get($identifier)
+	{
+		if(empty($identifier))
+			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+		
+		$cacheHash=$this->generateCacheHash($identifier, $this->expire);
+		$cacheData=unserialize($this->readData($this->cacheDir . $cacheHash));
+		
+		return $cacheData;
+	}
+	
+	/**
+	 * Write data to file
+	 * @param string $data
+	 */
+	private function writeData($filename, $data)
+	{
+		$fileHandler=fopen($filename, 'w');
+		fwrite($fileHandler, $data);
+		fclose($fileHandler);
+	}
+	
+	/**
+	 * Read data from file
+	 * @param string $filename
+	 * @return mixed
+	 */
+	private function readData($filename)
+	{
+		$output=false;
+		
+		if(is_file($filename))
+		{
+			$filelastModified=filemtime($filename);
+			$explodedInfo=explode('-', basename($filename));
+			$cacheDuration=base64_decode($explodedInfo[1]);
+			
+			if($cacheDuration > 0 && (time() - $filelastModified) >= $cacheDuration)
+				unlink($filename);
+			else
+			{
+				$fileHandler=fopen($filename, 'r');
+				$output=fgets($fileHandler);
+				fclose($fileHandler);
+			}
+		}
+		
+		return $output;
 	}
 	
 }
