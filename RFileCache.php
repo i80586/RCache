@@ -28,13 +28,13 @@ class RFileCache
 	 * As seconds
 	 * @property integer 
 	 */
-	private $expire=0;
+	private $expire=null;
 
 	/**
 	 * Class constructor
 	 * @param string $cacheFolder
 	 */
-	public function __construct($cacheDir, $expire=0)
+	public function __construct($cacheDir, $expire=null)
 	{
 		$this->setCacheDir($cacheDir);
 		$this->expire=$expire;
@@ -70,7 +70,7 @@ class RFileCache
 	 */
 	private function generateCacheHash($identifier, $expire)
 	{
-		return sha1($identifier) . '-' . base64_encode($expire);
+		return sha1($identifier);
 	}
 
 	/**
@@ -80,13 +80,18 @@ class RFileCache
 	 * @param integer $duration
 	 * @throws \Exception
 	 */
-	public function set($identifier, $data)
+	public function set($identifier, $data, $duration=null)
 	{
 		if(empty($identifier))
 			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-
+		
+		$cacheDuration=null === $duration ? $this->expire : $duration;
+		if(empty($cacheDuration))
+			throw new \Exception('Cache duration is not set', self::ERR_EMPTY_DURATION);
+		
 		$cacheHash=$this->generateCacheHash($identifier, $this->expire);
-		$this->writeData($this->cacheDir . $cacheHash, serialize($data));
+		$cacheData=(time() + $duration) . serialize($data);
+		$this->writeData($this->cacheDir . $cacheHash, $cacheData);
 	}
 
 	/**
@@ -111,9 +116,7 @@ class RFileCache
 	 */
 	private function writeData($filename, $data)
 	{
-		$fileHandler=fopen($filename, 'w');
-		fwrite($fileHandler, $data);
-		fclose($fileHandler);
+		file_put_contents($filename, $data, LOCK_EX);
 	}
 
 	/**
@@ -128,17 +131,10 @@ class RFileCache
 		if(is_file($filename))
 		{
 			$filelastModified=filemtime($filename);
-			$explodedInfo=explode('-', basename($filename));
-			$cacheDuration=base64_decode($explodedInfo[1]);
-
-			if($cacheDuration > 0 && (time() - $filelastModified) >= $cacheDuration)
-				unlink($filename);
-			else
-			{
-				$fileHandler=fopen($filename, 'r');
-				$output=fgets($fileHandler);
-				fclose($fileHandler);
-			}
+			$cacheContent=file_get_contents($filename);
+			$cacheDuration=substr($cacheContent, 0, 11);
+			
+			
 		}
 
 		return $output;
