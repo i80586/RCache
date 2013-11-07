@@ -31,12 +31,6 @@ class RFileCache
 	private $expire=0;
 
 	/**
-	 * Current cache identifier
-	 * @property string 
-	 */
-	private $cacheIdentifier;
-
-	/**
 	 * Class constructor
 	 * @param string $cacheFolder
 	 */
