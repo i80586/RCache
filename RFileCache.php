@@ -22,15 +22,38 @@ class RFileCache
      */
     private $cacheDir;
     
+	/**
+	 * Default expire time for all cache files
+	 * As seconds
+	 * @property integer 
+	 */
+	private $expire=null;
+	
+	/**
+	 * Current cache identifier
+	 * @property string 
+	 */
+	private $cacheIdentifier;
+	
     /**
      * Class constructor
      * @param string $cacheFolder
      */
-    public function __construct($cacheDir)
+    public function __construct($cacheDir, $expire=null)
     {
 		$this->setCacheDir($cacheDir);
-		$this->removeExpiredFiles();
+		$this->expire=$expire;
     }
+	
+	/**
+	 * Catch undefined property and
+	 * set current cache identifier
+	 * @param string $name
+	 */
+	public function __get($name)
+	{
+		$this->cacheIdentifier=$name;
+	}
     
     /**
      * Returns cache dir
@@ -52,4 +75,17 @@ class RFileCache
 		if(!is_dir($this->cacheDir))
 			throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
     }
+	
+	/**
+	 * Generates cache hash
+	 * Format: identifier-expire
+	 * @param string $identifier
+	 * @param integer $expire
+	 * @return string
+	 */
+	private function generateCacheHash($identifier, $expire)
+	{
+		return md5($identifier) . '-' . base64_encode($expire);
+	}
+	
 }
