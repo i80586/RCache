@@ -70,7 +70,7 @@ class RFileCache
 	 */
 	private function generateCacheHash($identifier, $expire)
 	{
-		return md5($identifier) . '-' . base64_encode($expire);
+		return sha1($identifier) . '-' . base64_encode($expire);
 	}
 
 	/**
