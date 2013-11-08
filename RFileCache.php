@@ -68,7 +68,7 @@ class RFileCache
 	 * @param integer $expire
 	 * @return string
 	 */
-	private function generateCacheHash($identifier, $expire)
+	private function generateCacheHash($identifier)
 	{
 		return sha1($identifier);
 	}
