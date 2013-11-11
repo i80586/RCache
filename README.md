@@ -11,17 +11,20 @@
 $cache=new \RLibrary\RFileCache(__dir__ . '/cache');
 
 <br/>
+<br/>
 <i>// Save cache in file about one hour</i>
 <br/>
 
 $cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
 
 <br/>
+<br/>
 <i>// Get cache value</i>
 <br/>
 
 $country=$cache->get('country');
 
+<br/>
 <br/>
 <i>// Delete cache</i>
 <br/>
