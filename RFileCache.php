@@ -70,7 +70,6 @@ class RFileCache
     /**
      * Generates cache hash
      * @param string $identifier
-     * @param integer $expire
      * @return string
      */
     private function generateCacheHash($identifier)
