@@ -7,26 +7,26 @@
 
 <p>
 <h4>Simple example</h4>
-<b>
+
 $cache=new \RLibrary\RFileCache(__dir__ . '/cache');
-</b>
+
 <br/>
-// Set
+<i>// Save cache in file about one hour</i>
 <br/>
-<b>
+
 $cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
-</b>
+
 <br/>
-<b>
+<i>// Get cache value</i>
+<br/>
+
 $country=$cache->get('country');
-</b>
+
 <br/>
-<b>
-echo implode(', ', $country);
-</b>
+<i>// Delete cache</i>
 <br/>
-<b>
+
 $cache->drop('country');
-</b>
+
 <br/>
 </p>
