@@ -123,13 +123,24 @@ class RFileCache
     
     /**
      * Remove cache by identifier
+     * Return true if file deleted and false if file not exists
      * @param string $identifier
+     * @return boolean
      */
     public function drop($identifier)
     {
 	if(empty($identifier))
 	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
 	
+	$cacheIdentifier=$this->generateCacheHash($identifier);
+	
+	if(is_file($this->cacheDir . $cacheIdentifier))
+	{
+	    unlink($this->cacheDir . $cacheIdentifier);
+	    return true;
+	}
+	else
+	    return false;
     }
 
     /**
