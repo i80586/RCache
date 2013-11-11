@@ -9,14 +9,24 @@
 <h4>Simple example</h4>
 <b>
 $cache=new \RLibrary\RFileCache(__dir__ . '/cache');
-<br/>
-$cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
-<br/>
-$country=$cache->get('country');
-<br/>
-echo implode(', ', $country);
-<br/>
-$cache->drop('country');
-<br/>
 </b>
+<br/>
+// Set
+<br/>
+<b>
+$cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
+</b>
+<br/>
+<b>
+$country=$cache->get('country');
+</b>
+<br/>
+<b>
+echo implode(', ', $country);
+</b>
+<br/>
+<b>
+$cache->drop('country');
+</b>
+<br/>
 </p>
