@@ -21,7 +21,7 @@ class RFileCache
     /**
      * Default cache duration (one year)
      */
-    const DEFAULT_DURATION=31104000;
+    const UNLIMITED_DURATION=31104000;
 
     /**
      * Cache folder
@@ -35,6 +35,18 @@ class RFileCache
      * @property integer 
      */
     private $expire=null;
+    
+    /**
+     * Temporary cache identifier
+     * @var type 
+     */
+    private $currentIdentifier;
+    
+    /**
+     * Temporary cache duration 
+     * @var integer 
+     */
+    private $currentDuration;
 
     /**
      * Class constructor
@@ -89,15 +101,13 @@ class RFileCache
 	if(empty($identifier))
 	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
 	
-	$cacheDuration=null !== $this->expire ? $this->expire : $duration;
+	$cacheDuration=(null !== $this->expire) ? $this->expire : $duration;
 	
-	if(!is_int($duration))
+	if(!is_int($cacheDuration))
 	    throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
 	
 	if(0 === $cacheDuration)
-	{
-	    $cacheDuration=self::DEFAULT_DURATION;
-	}
+	    $cacheDuration=self::UNLIMITED_DURATION;
 		
 	$cacheHash=$this->generateCacheHash($identifier);
 	$this->writeData($this->cacheDir . $cacheHash, $data, $cacheDuration);
@@ -160,7 +170,7 @@ class RFileCache
     private function readData($filename)
     {
 	$output=false;
-
+	
 	if(is_file($filename))
 	{
 	    $fileContent=file_get_contents($filename);
@@ -176,5 +186,44 @@ class RFileCache
 
 	return $output;
     }
+    
+    /**
+     * Start reading from buffer
+     * @param string $identifier
+     * @param integer $duration
+     * @throws \Exception
+     */
+    public function start($identifier, $duration=0)
+    {
+	if(empty($identifier))
+	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+	
+	$this->currentIdentifier=$this->generateCacheHash($identifier);
+	$this->currentDuration=$duration;
+	
+	if(!is_int($this->currentDuration))
+	    throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
+		
+	$cacheData=$this->readData($this->cacheDir . $this->currentIdentifier);
+					
+	if(false !== $cacheData)
+	{
+	    print $cacheData;
+	    return false;
+	}
+	else
+	    ob_start();
+    }
 
+    /**
+     * End reading from buffer
+     */
+    public function end()
+    {
+	$cacheData=ob_get_contents();
+	ob_end_clean();
+	
+	$this->writeData($this->cacheDir . $this->currentIdentifier, $cacheData, $this->currentDuration);
+    }
+    
 }
