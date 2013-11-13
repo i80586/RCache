@@ -205,18 +205,19 @@ class RFileCache
 	    throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
 		
 	$cacheData=$this->readData($this->cacheDir . $this->currentIdentifier);
-					
+	
 	if(false !== $cacheData)
 	{
-	    print $cacheData;
+	    echo $cacheData;
 	    return false;
 	}
 	else
-	    ob_start();
+	    return ob_start();
     }
 
     /**
      * End reading from buffer
+     * Save to cache
      */
     public function end()
     {
@@ -224,6 +225,8 @@ class RFileCache
 	ob_end_clean();
 	
 	$this->writeData($this->cacheDir . $this->currentIdentifier, $cacheData, $this->currentDuration);
+	
+	echo $cacheData;
     }
     
 }
