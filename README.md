@@ -1,12 +1,10 @@
-<h2>RFileCache</h2>
+## RFileCache
 <p>Simple PHP class for caching data in files</p>
 
 [![Build Status](https://travis-ci.org/i80586/RFileCache.png?branch=master)](https://travis-ci.org/i80586/RFileCache)
 
-<h3>Usage</h3>
 
-<p>
-<h4>Examples</h4>
+## Examples
 
 ### Data caching:
 
