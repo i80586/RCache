@@ -1,33 +1,37 @@
 <h2>RFileCache</h2>
 <p>Simple PHP class for caching data in files</p>
 
+[![Build Status](https://travis-ci.org/i80586/RFileCache.png?branch=master)](https://travis-ci.org/i80586/RFileCache)
+
 <h3>Usage</h3>
 
 <p>
-<h4>Simple example</h4>
+<h4>Examples</h4>
 
-$cache=new \RLibrary\RFileCache(__dir__ . '/cache');
+### Data caching:
 
-<br/>
-<br/>
-<i>// Save cache in file about one hour</i>
-<br/>
+```php
+include_once 'RFileCache/RFileCache.php';
 
+$cache=new RLibrary\RFileCache(__dir__ . '/cache');
+
+// save data in cache
 $cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
-
-<br/>
-<br/>
-<i>// Get cache value</i>
-<br/>
-
+// get cache by identifier
 $country=$cache->get('country');
-
-<br/>
-<br/>
-<i>// Delete cache</i>
-<br/>
-
+// remove cache
 $cache->drop('country');
+```
+### Fragment caching:
 
-<br/>
-</p>
+include_once 'RFileCache/RFileCache.php';
+
+$cache=new RLibrary\RFileCache(__dir__ . '/cache');
+
+...other HTML content...
+<?php if($cache->start('fragment-caching', 3600)) { ?>
+
+    ...content to be cached...
+
+<?php $cache->end(); } ?>
+...other HTML content...

@@ -221,12 +221,9 @@ class RFileCache
      */
     public function end()
     {
-	$cacheData=ob_get_contents();
+	$this->writeData($this->cacheDir . $this->currentIdentifier, ob_get_contents(), $this->currentDuration);
+	ob_flush();
 	ob_end_clean();
-	
-	$this->writeData($this->cacheDir . $this->currentIdentifier, $cacheData, $this->currentDuration);
-	
-	echo $cacheData;
     }
     
 }
