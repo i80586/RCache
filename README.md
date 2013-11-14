@@ -18,8 +18,10 @@ $country=$cache->get('country');
 // remove cache
 $cache->drop('country');
 ```
+
 ### Fragment caching:
 
+```php
 include_once 'RFileCache/RFileCache.php';
 
 $cache=new RLibrary\RFileCache(__dir__ . '/cache');
@@ -31,3 +33,4 @@ $cache=new RLibrary\RFileCache(__dir__ . '/cache');
 
 <?php $cache->end(); } ?>
 ...other HTML content...
+```
