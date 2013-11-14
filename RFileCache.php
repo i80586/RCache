@@ -38,13 +38,13 @@ class RFileCache
     
     /**
      * Temporary cache identifier
-     * @var type 
+     * @property string 
      */
     private $currentIdentifier;
     
     /**
      * Temporary cache duration 
-     * @var integer 
+     * @property integer 
      */
     private $currentDuration;
 
