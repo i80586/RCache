@@ -15,13 +15,13 @@ class RFileCache
     /**
      * Error constants
      */
-    const ERR_DIR_NOT_EXISTS=1;
-    const ERR_WRANG_DURATION=2;
-    
+    const ERR_DIR_NOT_EXISTS = 1;
+    const ERR_WRANG_DURATION = 2;
+
     /**
      * Default cache duration (one year)
      */
-    const UNLIMITED_DURATION=31104000;
+    const UNLIMITED_DURATION = 31104000;
 
     /**
      * Cache folder
@@ -34,14 +34,14 @@ class RFileCache
      * As seconds
      * @property integer 
      */
-    private $expire=null;
-    
+    private $expire = null;
+
     /**
      * Temporary cache identifier
      * @property string 
      */
     private $currentIdentifier;
-    
+
     /**
      * Temporary cache duration 
      * @property integer 
@@ -52,10 +52,10 @@ class RFileCache
      * Class constructor
      * @param string $cacheFolder
      */
-    public function __construct($cacheDir, $expire=null)
+    public function __construct($cacheDir, $expire = null)
     {
-	$this->setCacheDir($cacheDir);
-	$this->expire=$expire;
+        $this->setCacheDir($cacheDir);
+        $this->expire = $expire;
     }
 
     /**
@@ -64,7 +64,7 @@ class RFileCache
      */
     public function getCacheDir()
     {
-	return $this->cacheDir;
+        return $this->cacheDir;
     }
 
     /**
@@ -74,9 +74,10 @@ class RFileCache
      */
     public function setCacheDir($dir)
     {
-	$this->cacheDir=($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
-	if(!is_dir($this->cacheDir))
-	    throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
+        $this->cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
+        if (!is_dir($this->cacheDir)) {
+            throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
+        }
     }
 
     /**
@@ -86,7 +87,7 @@ class RFileCache
      */
     private function generateCacheHash($identifier)
     {
-	return sha1($identifier);
+        return sha1($identifier);
     }
 
     /**
@@ -96,21 +97,24 @@ class RFileCache
      * @param integer $duration
      * @throws \Exception
      */
-    public function set($identifier, $data, $duration=0)
+    public function set($identifier, $data, $duration = 0)
     {
-	if(empty($identifier))
-	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-	
-	$cacheDuration=(null !== $this->expire) ? $this->expire : $duration;
-	
-	if(!is_int($cacheDuration))
-	    throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
-	
-	if(0 === $cacheDuration)
-	    $cacheDuration=self::UNLIMITED_DURATION;
-		
-	$cacheHash=$this->generateCacheHash($identifier);
-	$this->writeData($this->cacheDir . $cacheHash, $data, $cacheDuration);
+        if (empty($identifier)) {
+            throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+        }
+
+        $cacheDuration = (null !== $this->expire) ? $this->expire : $duration;
+
+        if (!is_int($cacheDuration)) {
+            throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
+        }
+
+        if (0 === $cacheDuration) {
+            $cacheDuration = self::UNLIMITED_DURATION;
+        }
+
+        $cacheHash = $this->generateCacheHash($identifier);
+        $this->writeData($this->cacheDir . $cacheHash, $data, $cacheDuration);
     }
 
     /**
@@ -120,15 +124,16 @@ class RFileCache
      */
     public function get($identifier)
     {
-	if(empty($identifier))
-	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+        if (empty($identifier)) {
+            throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+        }
 
-	$cacheHash=$this->generateCacheHash($identifier, $this->expire);
-	$cacheData=$this->readData($this->cacheDir . $cacheHash);
+        $cacheHash = $this->generateCacheHash($identifier, $this->expire);
+        $cacheData = $this->readData($this->cacheDir . $cacheHash);
 
-	return $cacheData;
+        return $cacheData;
     }
-    
+
     /**
      * Remove cache by identifier
      * Return true if file deleted and false if file not exists
@@ -137,18 +142,18 @@ class RFileCache
      */
     public function drop($identifier)
     {
-	if(empty($identifier))
-	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-	
-	$cacheIdentifier=$this->generateCacheHash($identifier);
-	
-	if(is_file($this->cacheDir . $cacheIdentifier))
-	{
-	    unlink($this->cacheDir . $cacheIdentifier);
-	    return true;
-	}
-	else
-	    return false;
+        if (empty($identifier)) {
+            throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+        }
+
+        $cacheIdentifier = $this->generateCacheHash($identifier);
+
+        if (is_file($this->cacheDir . $cacheIdentifier)) {
+            unlink($this->cacheDir . $cacheIdentifier);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -159,7 +164,7 @@ class RFileCache
      */
     private function writeData($filename, $data, $duration)
     {
-	file_put_contents($filename, (time() + $duration) . serialize($data), LOCK_EX);
+        file_put_contents($filename, (time() + $duration) . serialize($data), LOCK_EX);
     }
 
     /**
@@ -169,50 +174,48 @@ class RFileCache
      */
     private function readData($filename)
     {
-	$output=false;
-	
-	if(is_file($filename))
-	{
-	    $fileContent=file_get_contents($filename);
-	    $expireTime=substr($fileContent, 0, 11);
-	    
-	    if($expireTime > time())
-	    {
-		$output=unserialize(substr($fileContent, 10));
-	    }
-	    else
-		unlink($filename);
-	}
+        $output = false;
 
-	return $output;
+        if (is_file($filename)) {
+            $fileContent = file_get_contents($filename);
+            $expireTime = substr($fileContent, 0, 11);
+
+            if ($expireTime > time()) {
+                $output = unserialize(substr($fileContent, 10));
+            } else
+                unlink($filename);
+        }
+
+        return $output;
     }
-    
+
     /**
      * Start reading from buffer
      * @param string $identifier
      * @param integer $duration
      * @throws \Exception
      */
-    public function start($identifier, $duration=0)
+    public function start($identifier, $duration = 0)
     {
-	if(empty($identifier))
-	    throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-	
-	$this->currentIdentifier=$this->generateCacheHash($identifier);
-	$this->currentDuration=$duration;
-	
-	if(!is_int($this->currentDuration))
-	    throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
-		
-	$cacheData=$this->readData($this->cacheDir . $this->currentIdentifier);
-	
-	if(false !== $cacheData)
-	{
-	    echo $cacheData;
-	    return false;
-	}
-	else
-	    return ob_start();
+        if (empty($identifier)) {
+            throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+        }
+
+        $this->currentIdentifier = $this->generateCacheHash($identifier);
+        $this->currentDuration = $duration;
+
+        if (!is_int($this->currentDuration)) {
+            throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
+        }
+
+        $cacheData = $this->readData($this->cacheDir . $this->currentIdentifier);
+
+        if (false !== $cacheData) {
+            echo $cacheData;
+            return false;
+        } else {
+            return ob_start();
+        }
     }
 
     /**
@@ -221,9 +224,9 @@ class RFileCache
      */
     public function end()
     {
-	$this->writeData($this->cacheDir . $this->currentIdentifier, ob_get_contents(), $this->currentDuration);
-	ob_flush();
-	ob_end_clean();
+        $this->writeData($this->cacheDir . $this->currentIdentifier, ob_get_contents(), $this->currentDuration);
+        ob_flush();
+        ob_end_clean();
     }
-    
+
 }
