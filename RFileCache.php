@@ -75,7 +75,7 @@ class RFileCache
     public function setCacheDir($dir)
     {
         $this->cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
-        if (!is_dir($this->cacheDir)) {
+        if (! is_dir($this->cacheDir)) {
             throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
         }
     }
@@ -105,7 +105,7 @@ class RFileCache
 
         $cacheDuration = (null !== $this->expire) ? $this->expire : $duration;
 
-        if (!is_int($cacheDuration)) {
+        if (! is_int($cacheDuration)) {
             throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
         }
 
@@ -204,7 +204,7 @@ class RFileCache
         $this->currentIdentifier = $this->generateCacheHash($identifier);
         $this->currentDuration = $duration;
 
-        if (!is_int($this->currentDuration)) {
+        if (! is_int($this->currentDuration)) {
             throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
         }
 
