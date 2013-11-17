@@ -7,6 +7,7 @@
 ### Data caching:
 
 ```php
+include_once 'RFileCache/RCache.php';
 include_once 'RFileCache/RFileCache.php';
 
 $cache = new RLibrary\RFileCache(__dir__ . '/cache');
@@ -22,6 +23,7 @@ $cache->drop('country');
 ### Fragment caching:
 
 ```php
+include_once 'RFileCache/RCache.php';
 include_once 'RFileCache/RFileCache.php';
 
 $cache = new RLibrary\RFileCache(__dir__ . '/cache');
