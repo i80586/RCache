@@ -124,14 +124,7 @@ class RFileCache extends \RLibrary\RCache
             throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
         }
 
-        $cacheIdentifier = $this->generateCacheHash($identifier);
-
-        if (is_file($this->cacheDir . $cacheIdentifier)) {
-            unlink($this->cacheDir . $cacheIdentifier);
-            return true;
-        } else {
-            return false;
-        }
+		return $this->removeData($this->cacheDir . $this->generateCacheHash($identifier));
     }
 
     /**
@@ -153,15 +146,8 @@ class RFileCache extends \RLibrary\RCache
         if (! is_int($this->currentDuration)) {
             throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
         }
-
-        $cacheData = $this->readData($this->cacheDir . $this->currentIdentifier);
-
-        if (false !== $cacheData) {
-            echo $cacheData;
-            return false;
-        } else {
-            return ob_start();
-        }
+				
+		return $this->beginProcess($this->cacheDir . $this->currentIdentifier);
     }
 
     /**
@@ -169,9 +155,7 @@ class RFileCache extends \RLibrary\RCache
      */
     public function end()
     {
-        $this->writeData($this->cacheDir . $this->currentIdentifier, ob_get_contents(), $this->currentDuration);
-        ob_flush();
-        ob_end_clean();
+		$this->endProcess($this->cacheDir . $this->currentIdentifier, $this->currentDuration);
     }
 
 }
