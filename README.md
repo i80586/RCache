@@ -12,7 +12,7 @@ include_once 'RCache/RFileCache.php';
 include_once 'RCache/RCaching.php';
 
 $cache = new RLibrary\RCaching(
-					new RLibrary\RCaching(__DIR__ . '/cache/')
+					new RLibrary\RFileCache(__DIR__ . '/cache/')
 				);
 
 // save data in cache
@@ -31,7 +31,7 @@ include_once 'RCache/RFileCache.php';
 include_once 'RCache/RCaching.php';
 
 $cache = new RLibrary\RCaching(
-					new RLibrary\RCaching(__DIR__ . '/cache/')
+					new RLibrary\RFileCache(__DIR__ . '/cache/')
 				);
 
 ...other HTML content...
