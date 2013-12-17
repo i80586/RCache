@@ -22,26 +22,26 @@ class RFileCache extends \RLibrary\RCache
      * Cache folder
      * @property string 
      */
-    private $cacheDir;
+    private $_cacheDir;
 
     /**
      * Default expire time for all cache files
      * As seconds
      * @property integer 
      */
-    private $expire = null;
+    private $_expire = null;
 
     /**
      * Temporary cache identifier
      * @property string 
      */
-    private $currentIdentifier;
+    private $_currentIdentifier;
 
     /**
      * Temporary cache duration 
      * @property integer 
      */
-    private $currentDuration;
+    private $_currentDuration;
 
     /**
      * Class constructor
@@ -50,7 +50,7 @@ class RFileCache extends \RLibrary\RCache
     public function __construct($cacheDir, $expire = null)
     {
         $this->setCacheDir($cacheDir);
-        $this->expire = $expire;
+        $this->_expire = $expire;
     }
 
     /**
@@ -59,7 +59,7 @@ class RFileCache extends \RLibrary\RCache
      */
     public function getCacheDir()
     {
-        return $this->cacheDir;
+        return $this->_cacheDir;
     }
 
     /**
@@ -69,8 +69,8 @@ class RFileCache extends \RLibrary\RCache
      */
     public function setCacheDir($dir)
     {
-        $this->cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
-        if (! is_dir($this->cacheDir)) {
+        $this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
+        if (! is_dir($this->_cacheDir)) {
             throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
         }
     }
@@ -140,7 +140,7 @@ class RFileCache extends \RLibrary\RCache
             throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
         }
 
-        $cacheDuration = (null !== $this->expire) ? $this->expire : $duration;
+        $cacheDuration = (null !== $this->_expire) ? $this->_expire : $duration;
 
         if (! is_int($cacheDuration)) {
             throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
@@ -151,7 +151,7 @@ class RFileCache extends \RLibrary\RCache
         }
 
         $cacheHash = $this->generateCacheHash($identifier);
-        $this->writeData($this->cacheDir . $cacheHash, $data, $cacheDuration);
+        $this->writeData($this->_cacheDir . $cacheHash, $data, $cacheDuration);
     }
 
     /**
@@ -165,8 +165,8 @@ class RFileCache extends \RLibrary\RCache
             throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
         }
 
-        $cacheHash = $this->generateCacheHash($identifier, $this->expire);
-        $cacheData = $this->readData($this->cacheDir . $cacheHash);
+        $cacheHash = $this->generateCacheHash($identifier, $this->_expire);
+        $cacheData = $this->readData($this->_cacheDir . $cacheHash);
 
         return $cacheData;
     }
@@ -183,7 +183,7 @@ class RFileCache extends \RLibrary\RCache
             throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
         }
 
-		return $this->removeData($this->cacheDir . $this->generateCacheHash($identifier));
+		return $this->removeData($this->_cacheDir . $this->generateCacheHash($identifier));
     }
 	
 	/**
@@ -227,14 +227,14 @@ class RFileCache extends \RLibrary\RCache
             throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
         }
 
-        $this->currentIdentifier = $this->generateCacheHash($identifier);
-        $this->currentDuration = $duration;
+        $this->_currentIdentifier = $this->generateCacheHash($identifier);
+        $this->_currentDuration = $duration;
 
-        if (! is_int($this->currentDuration)) {
+        if (! is_int($this->_currentDuration)) {
             throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
         }
 				
-		return $this->beginProcess($this->cacheDir . $this->currentIdentifier);
+		return $this->beginProcess($this->_cacheDir . $this->_currentIdentifier);
     }
 
     /**
@@ -242,7 +242,7 @@ class RFileCache extends \RLibrary\RCache
      */
     public function end()
     {
-		$this->endProcess($this->cacheDir . $this->currentIdentifier, $this->currentDuration);
+		$this->endProcess($this->_cacheDir . $this->_currentIdentifier, $this->_currentDuration);
     }
 
 }
