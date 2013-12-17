@@ -16,7 +16,9 @@ $cache = new RLibrary\RCaching(
 				);
 
 // save data in cache
-$cache->getHandler()->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
+$cache->getHandler()->set('country', 
+							array('city' => 'Baku', 'country' => 'Azerbaijan'),
+						 3600);
 // get cache by identifier
 $country = $cache->getHandler()->get('country');
 // remove cache
