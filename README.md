@@ -7,32 +7,40 @@
 ### Data caching:
 
 ```php
-include_once 'RFileCache/RCache.php';
-include_once 'RFileCache/RFileCache.php';
+include_once 'RCache/RCache.php';
+include_once 'RCache/RFileCache.php';
+include_once 'RCache/RCaching.php';
 
-$cache = new RLibrary\RFileCache(__dir__ . '/cache');
+$cache = new RLibrary\RCaching(
+					new RLibrary\RFileCache(__DIR__ . '/cache/')
+				);
 
 // save data in cache
-$cache->set('country', array('city' => 'Baku', 'country' => 'Azerbaijan'), 3600);
+$cache->getHandler()->set('country', 
+							array('city' => 'Baku', 'country' => 'Azerbaijan'),
+						 3600);
 // get cache by identifier
-$country = $cache->get('country');
+$country = $cache->getHandler()->get('country');
 // remove cache
-$cache->drop('country');
+$cache->getHandler()->drop('country');
 ```
 
 ### Fragment caching:
 
 ```php
-include_once 'RFileCache/RCache.php';
-include_once 'RFileCache/RFileCache.php';
+include_once 'RCache/RCache.php';
+include_once 'RCache/RFileCache.php';
+include_once 'RCache/RCaching.php';
 
-$cache = new RLibrary\RFileCache(__dir__ . '/cache');
+$cache = new RLibrary\RCaching(
+					new RLibrary\RFileCache(__DIR__ . '/cache/')
+				);
 
 ...other HTML content...
-<?php if ($cache->start('fragment-caching', 3600)) { ?>
+<?php if ($cache->getHandler()->start('fragment-caching', 3600)) { ?>
 
     ...content to be cached...
 
-<?php $cache->end(); } ?>
+<?php $cache->getHandler()->end(); } ?>
 ...other HTML content...
 ```

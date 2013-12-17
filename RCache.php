@@ -12,6 +12,7 @@ namespace RLibrary;
 abstract class RCache
 {
 
+<<<<<<< HEAD
 	/**
 	 * Error constants
 	 */
@@ -133,5 +134,41 @@ abstract class RCache
 		ob_flush();
 		ob_end_clean();
 	}
+=======
+    /**
+     * Default cache duration (one year)
+     */
+    const UNLIMITED_DURATION = 31104000;
+
+    /**
+     * Save data in cache
+     * @param string $identifier
+     * @param mixed $data
+     * @param integer $duration
+     */
+    abstract public function set($identifier, $data, $duration = 0);
+    
+    /**
+     * Get cache
+     * @param string $identifier
+     */
+    abstract public function get($identifier);
+    
+    /**
+     * Delete cache
+     * @param string $identifier
+     */
+    abstract public function drop($identifier);
+
+    /**
+     * Generates cache hash
+     * @param string $identifier
+     * @return string
+     */
+    protected function generateCacheHash($identifier)
+    {
+		return sha1($identifier);
+    }
+>>>>>>> develop
 
 }
