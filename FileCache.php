@@ -1,15 +1,15 @@
 <?php
 
-namespace RLibrary;
+namespace RCache;
 
 /**
- * RFileCache class file
+ * FileCache class file
  * Simple class for file caching
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
  * @date 6 November 2013
  */
-class RFileCache extends RCache
+class FileCache extends ICache
 {
 
 	/**
@@ -21,31 +21,35 @@ class RFileCache extends RCache
 
 	/**
 	 * Cache folder
-	 * @property string 
+	 * @property string
 	 */
 	private $_cacheDir;
 
 	/**
 	 * Default expire time for all cache files
 	 * As seconds
+	 * 
 	 * @property integer 
 	 */
 	private $_expire = null;
 
 	/**
 	 * Temporary cache identifier
+	 * 
 	 * @property string 
 	 */
 	private $_currentIdentifier;
 
 	/**
 	 * Temporary cache duration 
+	 * 
 	 * @property integer 
 	 */
 	private $_currentDuration;
 
 	/**
 	 * Class constructor
+	 * 
 	 * @param string $cacheFolder
 	 */
 	public function __construct($cacheDir, $expire = null)
@@ -56,6 +60,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Returns cache dir
+	 * 
 	 * @return string
 	 */
 	public function getCacheDir()
@@ -65,6 +70,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Sets cache dir
+	 * 
 	 * @param string $dir
 	 * @throws Exception
 	 */
@@ -78,6 +84,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Read data from file
+	 * 
 	 * @param string $filename
 	 * @return mixed
 	 */
@@ -101,6 +108,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Write data to file
+	 * 
 	 * @param string $filename
 	 * @param string $data
 	 * @param integer $duration
@@ -112,6 +120,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Remove cache data
+	 * 
 	 * @param string $filename
 	 * @return boolean
 	 */
@@ -130,6 +139,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Save data in cache
+	 * 
 	 * @param string $identifier
 	 * @param mixed $data
 	 * @param integer $duration
@@ -151,12 +161,13 @@ class RFileCache extends RCache
 			$cacheDuration = self::UNLIMITED_DURATION;
 		}
 
-		$cacheHash = $this->generateCacheHash($identifier);
+		$cacheHash = $this->getCacheHash($identifier);
 		$this->writeData($this->_cacheDir . $cacheHash, $data, $cacheDuration);
 	}
 
 	/**
 	 * Load data
+	 * 
 	 * @param string $identifier
 	 * @return mixed
 	 */
@@ -166,7 +177,7 @@ class RFileCache extends RCache
 			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
 		}
 
-		$cacheHash = $this->generateCacheHash($identifier, $this->_expire);
+		$cacheHash = $this->getCacheHash($identifier, $this->_expire);
 		$cacheData = $this->readData($this->_cacheDir . $cacheHash);
 
 		return $cacheData;
@@ -175,6 +186,7 @@ class RFileCache extends RCache
 	/**
 	 * Remove cache by identifier
 	 * Return true if file deleted and false if file not exists
+	 * 
 	 * @param string $identifier
 	 * @return boolean
 	 */
@@ -184,12 +196,14 @@ class RFileCache extends RCache
 			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
 		}
 
-		return $this->removeData($this->_cacheDir . $this->generateCacheHash($identifier));
+		return $this->removeData($this->_cacheDir . $this->getCacheHash($identifier));
 	}
 
 	/**
 	 * Begin reading data from buffer
-	 * @param string $identifier
+	 * 
+	 * @param string $cacheFile
+	 * @return boolean
 	 */
 	protected function beginProcess($cacheFile)
 	{
@@ -205,6 +219,7 @@ class RFileCache extends RCache
 
 	/**
 	 * End reading from buffer and write to file
+	 * 
 	 * @param string $cacheFile
 	 * @param integer $cacheDuration
 	 */
@@ -217,6 +232,7 @@ class RFileCache extends RCache
 
 	/**
 	 * Start reading from buffer
+	 * 
 	 * @param string $identifier
 	 * @param integer $duration
 	 * @return boolean
@@ -228,7 +244,7 @@ class RFileCache extends RCache
 			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
 		}
 
-		$this->_currentIdentifier = $this->generateCacheHash($identifier);
+		$this->_currentIdentifier = $this->getCacheHash($identifier);
 		$this->_currentDuration = $duration;
 
 		if (!is_int($this->_currentDuration)) {

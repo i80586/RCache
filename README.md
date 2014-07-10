@@ -7,20 +7,25 @@
 ### Data caching:
 
 ```php
-include_once 'RCache/RCache.php';
-include_once 'RCache/RFileCache.php';
-include_once 'RCache/RCaching.php';
+spl_autoload_register(function ($className) {
+	if (is_file($filePath = __DIR__ . '/' . str_replace('\\', '/', $className) . '.php')) {
+		require $filePath;
+	}
+});
 
-$cache = new RLibrary\RCaching(
-					new RLibrary\RFileCache(__DIR__ . '/cache/')
+$cache = new RCache\Cache(
+					new RCache\FileCache(__DIR__ . '/cache/')
 				);
 
 // save data in cache
-$cache->getHandler()->set('country', 
-							array('city' => 'Baku', 'country' => 'Azerbaijan'),
-						 3600);
+$cache->getHandler()->set('country', [
+		'city' => 'Baku',
+		'country' => 'Azerbaijan'
+	], 3600);
+
 // get cache by identifier
 $country = $cache->getHandler()->get('country');
+
 // remove cache
 $cache->getHandler()->drop('country');
 ```
@@ -28,12 +33,9 @@ $cache->getHandler()->drop('country');
 ### Fragment caching:
 
 ```php
-include_once 'RCache/RCache.php';
-include_once 'RCache/RFileCache.php';
-include_once 'RCache/RCaching.php';
 
-$cache = new RLibrary\RCaching(
-					new RLibrary\RFileCache(__DIR__ . '/cache/')
+$cache = new RCache\Cache(
+					new RCache\FileCache(__DIR__ . '/cache/')
 				);
 
 ...other HTML content...
