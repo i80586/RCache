@@ -22,16 +22,16 @@ $cache = new RCache\Cache(
 				);
 
 // save data in cache
-$cache->getHandler()->set('country', [
+$cache->set('country', [
 		'city' => 'Baku',
 		'country' => 'Azerbaijan'
 	], 3600);
 
 // get cache by identifier
-$country = $cache->getHandler()->get('country');
+$country = $cache->get('country');
 
 // remove cache
-$cache->getHandler()->drop('country');
+$cache->drop('country');
 ```
 
 ### Fragment caching:
@@ -43,10 +43,10 @@ $cache = new RCache\Cache(
 				);
 
 ...other HTML content...
-<?php if ($cache->getHandler()->start('fragment-caching', 3600)) { ?>
+<?php if ($cache->start('fragment-caching', 3600)) { ?>
 
     ...content to be cached...
 
-<?php $cache->getHandler()->end(); } ?>
+<?php $cache->end(); } ?>
 ...other HTML content...
 ```
