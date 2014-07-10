@@ -2,9 +2,7 @@
 <p>Simple PHP class for caching data in files</p>
 
 
-## Examples
-
-### Data caching:
+### Autoload
 
 ```php
 spl_autoload_register(function ($className) {
@@ -12,7 +10,13 @@ spl_autoload_register(function ($className) {
 		require $filePath;
 	}
 });
+```
 
+## Examples
+
+### Data caching:
+
+```php
 $cache = new RCache\Cache(
 					new RCache\FileCache(__DIR__ . '/cache/')
 				);
