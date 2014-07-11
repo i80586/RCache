@@ -1,4 +1,4 @@
-# RFileCache
+# RCache
 <p>Simple PHP class for caching data in files</p>
 
 
