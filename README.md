@@ -11,10 +11,24 @@ The recommended way to install RCache is through
 curl -sS https://getcomposer.org/installer | php
 ```
 
-Next, run the Composer command to install the latest stable version of RCache:
+Next, add following string into the composer.json file:
 
 ```bash
-composer require i80586/rcache
+{
+    ...
+    require {
+        ...
+         "i80586/rcache": "dev-master"
+        ...
+    }
+    ...
+}
+```
+
+Now you can update composer packages via
+
+```bash
+composer update
 ```
 
 After installing, you need to require Composer's autoloader:
