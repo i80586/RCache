@@ -15,4 +15,7 @@
             "RCache": "src"
         }
     }
+  , "require": {
+       "ext-memcache": "*"
+    }
 }
