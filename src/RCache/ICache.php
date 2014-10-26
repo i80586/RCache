@@ -12,6 +12,20 @@ namespace RCache;
 abstract class ICache
 {
 
+	/**
+	 * Temporary cache identifier
+	 * 
+	 * @property string 
+	 */
+	protected $_currentIdentifier;
+
+	/**
+	 * Temporary cache duration 
+	 * 
+	 * @property integer 
+	 */
+	protected $_currentDuration;
+	
     /**
      * Default cache duration (one year)
      */
@@ -39,16 +53,5 @@ abstract class ICache
      * @param string $identifier
      */
     abstract public function drop($identifier);
-
-    /**
-     * Generates cache hash
-	 * 
-     * @param string $identifier
-     * @return string
-     */
-    protected function getCacheHash($identifier)
-    {
-		return sha1($identifier);
-    }
 
 }

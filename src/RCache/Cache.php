@@ -15,7 +15,7 @@ class Cache
 	 * 
 	 * @var ICache
 	 */
-	private $_cacheHandler = null;
+	protected $_cacheHandler = null;
 	
 	/**
 	 * Class construction
@@ -65,12 +65,17 @@ class Cache
 	 * Start reading from buffer
 	 * 
 	 * @param string $identifier
-	 * @param integer $duration
+	 * @param boolean|integer $duration
 	 * @return boolean
 	 */
-	public function start($identifier, $duration = 0)
+	public function start($identifier, $duration = false)
 	{
-		return $this->_cacheHandler->start($identifier, $duration);
+		if (false === ($cacheData = $this->_cacheHandler->beginProcess($identifier, $duration))) {
+			return ob_start();
+		} else {
+			echo $cacheData;
+			return false;
+		}
 	}
 	
 	/**
@@ -78,7 +83,10 @@ class Cache
 	 */
 	public function end()
 	{
-		$this->_cacheHandler->end();
+		$this->_cacheHandler->endProcess(ob_get_contents());
+		
+		ob_flush();
+		ob_end_clean();
 	}
 	
 }

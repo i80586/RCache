@@ -23,39 +23,30 @@ class FileCache extends ICache
 	 * Cache folder
 	 * @property string
 	 */
-	private $_cacheDir;
-
-	/**
-	 * Default expire time for all cache files
-	 * As seconds
-	 * 
-	 * @property integer 
-	 */
-	private $_expire = null;
+	protected $_cacheDir;
 
 	/**
 	 * Temporary cache identifier
 	 * 
 	 * @property string 
 	 */
-	private $_currentIdentifier;
+	protected $_currentIdentifier;
 
 	/**
 	 * Temporary cache duration 
 	 * 
 	 * @property integer 
 	 */
-	private $_currentDuration;
+	protected $_currentDuration;
 
 	/**
 	 * Class constructor
 	 * 
-	 * @param string $cacheFolder
+	 * @param string $cacheDir
 	 */
-	public function __construct($cacheDir, $expire = null)
+	public function __construct($cacheDir)
 	{
 		$this->setCacheDir($cacheDir);
-		$this->_expire = $expire;
 	}
 
 	/**
@@ -142,27 +133,16 @@ class FileCache extends ICache
 	 * 
 	 * @param string $identifier
 	 * @param mixed $data
-	 * @param integer $duration
+	 * @param boolean|integer $duration
 	 * @throws \Exception
 	 */
-	public function set($identifier, $data, $duration = 0)
+	public function set($identifier, $data, $duration = false)
 	{
-		if (empty($identifier)) {
-			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
+		if (!$duration) {
+			$duration = self::UNLIMITED_DURATION;
 		}
 
-		$cacheDuration = (null !== $this->_expire) ? $this->_expire : $duration;
-
-		if (!is_int($cacheDuration)) {
-			throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
-		}
-
-		if (0 === $cacheDuration) {
-			$cacheDuration = self::UNLIMITED_DURATION;
-		}
-
-		$cacheHash = $this->getCacheHash($identifier);
-		$this->writeData($this->_cacheDir . $cacheHash, $data, $cacheDuration);
+		$this->writeData($this->_cacheDir . $this->getCacheHash($identifier), $data, $duration);
 	}
 
 	/**
@@ -173,14 +153,7 @@ class FileCache extends ICache
 	 */
 	public function get($identifier)
 	{
-		if (empty($identifier)) {
-			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-		}
-
-		$cacheHash = $this->getCacheHash($identifier, $this->_expire);
-		$cacheData = $this->readData($this->_cacheDir . $cacheHash);
-
-		return $cacheData;
+		return $this->readData($this->_cacheDir . $this->getCacheHash($identifier, $this->_expire));
 	}
 
 	/**
@@ -192,74 +165,47 @@ class FileCache extends ICache
 	 */
 	public function drop($identifier)
 	{
-		if (empty($identifier)) {
-			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-		}
-
 		return $this->removeData($this->_cacheDir . $this->getCacheHash($identifier));
 	}
 
 	/**
-	 * Begin reading data from buffer
-	 * 
-	 * @param string $cacheFile
-	 * @return boolean
-	 */
-	protected function beginProcess($cacheFile)
-	{
-		$cacheData = $this->readData($cacheFile);
-
-		if (false !== $cacheData) {
-			echo $cacheData;
-			return false;
-		} else {
-			return ob_start();
-		}
-	}
-
-	/**
-	 * End reading from buffer and write to file
-	 * 
-	 * @param string $cacheFile
-	 * @param integer $cacheDuration
-	 */
-	protected function endProcess($cacheFile, $cacheDuration)
-	{
-		$this->writeData($cacheFile, ob_get_contents(), $cacheDuration);
-		ob_flush();
-		ob_end_clean();
-	}
-
-	/**
-	 * Start reading from buffer
+	 * Get content from cache
 	 * 
 	 * @param string $identifier
-	 * @param integer $duration
-	 * @return boolean
-	 * @throws \Exception
+	 * @param boolean|integer $duration
+	 * @return mixed
 	 */
-	public function start($identifier, $duration = 0)
+	public function beginProcess($identifier, $duration)
 	{
-		if (empty($identifier)) {
-			throw new \Exception('Cache identifier is not set', self::ERR_EMPTY_IDENTIFIER);
-		}
-
 		$this->_currentIdentifier = $this->getCacheHash($identifier);
-		$this->_currentDuration = $duration;
-
-		if (!is_int($this->_currentDuration)) {
-			throw new \Exception('Cache duration must be integer', self::ERR_WRANG_DURATION);
+		$this->_currentDuration = !$duration ? self::UNLIMITED_DURATION : $duration;
+		
+		if (false === ($cacheData = $this->readData($this->_cacheDir . $this->_currentIdentifier))) {
+			return false;
 		}
-
-		return $this->beginProcess($this->_cacheDir . $this->_currentIdentifier);
+		
+		return $cacheData;
 	}
 
 	/**
-	 * End reading from buffer and save to cache
+	 * Write catched data
+	 * 
+	 * @param string $data
 	 */
-	public function end()
+	public function endProcess($data)
 	{
-		$this->endProcess($this->_cacheDir . $this->_currentIdentifier, $this->_currentDuration);
+		$this->writeData($this->_cacheDir . $this->_currentIdentifier, $data, $this->_currentDuration);
 	}
+	
+	/**
+     * Generates cache hash
+	 * 
+     * @param string $identifier
+     * @return string
+     */
+    protected function getCacheHash($identifier)
+    {
+		return sha1($identifier);
+    }
 
 }
