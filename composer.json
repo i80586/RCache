@@ -15,7 +15,4 @@
             "RCache": "src"
         }
     }
-  , "require": {
-        "php": ">=5.4.0"
-    }
 }
