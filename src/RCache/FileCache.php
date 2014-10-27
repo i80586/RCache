@@ -46,7 +46,7 @@ class FileCache extends ICache
 	 */
 	public function __construct($cacheDir)
 	{
-		$this->setCacheDir($cacheDir);
+		$this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
 	}
 
 	/**
@@ -57,20 +57,6 @@ class FileCache extends ICache
 	public function getCacheDir()
 	{
 		return $this->_cacheDir;
-	}
-
-	/**
-	 * Sets cache dir
-	 * 
-	 * @param string $dir
-	 * @throws Exception
-	 */
-	public function setCacheDir($dir)
-	{
-		$this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
-		if (!is_dir($this->_cacheDir)) {
-			throw new \Exception('Cache dir is not exists', self::ERR_DIR_NOT_EXISTS);
-		}
 	}
 
 	/**
