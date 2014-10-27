@@ -82,10 +82,9 @@ class MemCache extends ICache
 	 * @param string $duration
 	 * @return mixed
 	 */
-	public function beginProcess($identifier, $duration)
+	public function beginProcess($identifier, $duration = 0)
 	{
 		$this->_currentIdentifier = $identifier;
-		$this->_currentDuration = !$duration ? self::UNLIMITED_DURATION : $duration;
 		
 		if (false === ($cacheData = $this->get($this->_currentIdentifier))) {
 			return false;
