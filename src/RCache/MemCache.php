@@ -59,7 +59,9 @@ class MemCache extends ICache
 			$duration = self::UNLIMITED_DURATION;
 		}
 		
-		if (!$this->_memcacheHandler->set($identifier, $data, false, $duration)) {
+		$compress = is_bool($data) || is_int($data) || is_float($data) ? false : MEMCACHE_COMPRESSED;
+		
+		if (!$this->_memcacheHandler->set($identifier, $data, $compress, $duration)) {
 			throw new \Exception('Failed to save data at the server');
 		}
 	}
