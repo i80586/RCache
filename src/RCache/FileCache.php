@@ -136,7 +136,7 @@ class FileCache extends ICache
 	 * @param boolean|integer $duration
 	 * @throws \Exception
 	 */
-	public function set($identifier, $data, $duration = false)
+	public function set($identifier, $data, $duration = 0)
 	{
 		if (!$duration) {
 			$duration = self::UNLIMITED_DURATION;
