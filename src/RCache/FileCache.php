@@ -117,12 +117,8 @@ class FileCache extends ICache
 	 */
 	protected function removeData($filename)
 	{
-		try {
-			if (is_file($filename)) {
-				unlink($filename);
-			}
-		} catch (Exception $e) {
-			return false;
+		if (is_file($filename)) {
+			unlink($filename);
 		}
 
 		return true;
