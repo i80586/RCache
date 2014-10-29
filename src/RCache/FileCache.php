@@ -38,14 +38,14 @@ class FileCache extends ICache
     protected $_currentDuration;
 
     /**
-	 * Class constructor
-	 * 
-	 * @param string $cacheDir
-	 */
-	public function __construct($cacheDir)
-	{
-		$this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
-	}
+     * Class constructor
+     * 
+     * @param string $cacheDir
+     */
+    public function __construct($cacheDir)
+    {
+        $this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
+    }
 
     /**
      * Returns cache dir
@@ -101,12 +101,8 @@ class FileCache extends ICache
      */
     protected function removeData($filename)
     {
-        try {
-            if (is_file($filename)) {
-                unlink($filename);
-            }
-        } catch (Exception $e) {
-            return false;
+        if (is_file($filename)) {
+            unlink($filename);
         }
 
         return true;
