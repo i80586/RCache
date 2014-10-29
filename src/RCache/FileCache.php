@@ -15,8 +15,6 @@ class FileCache extends ICache
     /**
      * Error constants
      */
-    const ERR_DIR_NOT_EXISTS = 0x1;
-    const ERR_WRANG_DURATION = 0x2;
     const ERR_DELETE_FILE = 0x3;
 
     /**
