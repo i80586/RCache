@@ -70,7 +70,7 @@ class MemCache extends ICache
      */
     public function drop($identifier)
     {
-        return !$this->_memcacheHandler->delete($identifier);
+        return $this->_memcacheHandler->delete($identifier);
     }
 
     /**
