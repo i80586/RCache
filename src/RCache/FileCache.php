@@ -44,7 +44,7 @@ class FileCache extends ICache
      */
     public function __construct($cacheDir)
     {
-        $this->_cacheDir = ($dir[strlen($dir) - 1] != DIRECTORY_SEPARATOR) ? ($dir . DIRECTORY_SEPARATOR) : $dir;
+        $this->_cacheDir = ($cacheDir[strlen($cacheDir) - 1] != DIRECTORY_SEPARATOR) ? ($cacheDir . DIRECTORY_SEPARATOR) : $cacheDir;
     }
 
     /**
