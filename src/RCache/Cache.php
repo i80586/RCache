@@ -16,18 +16,47 @@ class Cache
 	 * @var ICache
 	 */
 	protected $_cacheHandler = null;
-	
-	/**
+    
+    /**
+     * Available cache types
+     * 
+     * @var array 
+     */
+    protected static $_availableTypes = [
+        'file' => 'FileCache',
+        'memory' => 'MemCache'
+    ];
+
+    /**
 	 * Class construction
 	 * 
-	 * @param ICache $cacheHandler
+	 * @param ICache|string $cacheType
+     * @param array $args
 	 */
-	public function __construct(ICache $cacheHandler)
+	public function __construct($cacheType, array $args = [])
 	{
-		$this->_cacheHandler = $cacheHandler;
+        $this->_cacheHandler = ($cacheType instanceof ICache) ? $cacheType : self::getCacheClass($cacheType, $args);
 	}
-	
-	/**
+    
+    /**
+     * Get cache class by type
+     * 
+     * @param string $type
+     * @param array $args
+     * @return ICache
+     * @throws \Exception
+     */
+    protected static function getCacheClass($type, array $args = [])
+    {
+        if ( ! array_key_exists($type, self::$_availableTypes)) {
+            throw new \Exception('Cache type not found');
+        }
+        
+        $className =  __NAMESPACE__ . '\\' . self::$_availableTypes[$type];
+        return (new \ReflectionClass($className))->newInstanceArgs($args);
+    }
+
+        /**
 	 * Get cache by identifier
 	 * 
 	 * @param string $identifier
