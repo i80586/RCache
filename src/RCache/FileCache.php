@@ -11,6 +11,11 @@ namespace RCache;
  */
 class FileCache extends ICache
 {
+    
+    /**
+     * Default cache duration (one year)
+     */
+    const UNLIMITED_DURATION = 31104000;
 
     /**
      * Error constants
