@@ -29,7 +29,7 @@ class MemCache extends ICache
     public function __construct($hostname = '127.0.0.1', $port = '11211')
     {
         $this->_memcacheHandler = new \Memcache();
-        if (!$this->_memcacheHandler->connect($hostname, $port)) {
+        if ( ! $this->_memcacheHandler->connect($hostname, $port)) {
             throw new \Exception("Could not connect to server. Connection information: {$hostname}:{$port}");
         }
     }
@@ -57,7 +57,7 @@ class MemCache extends ICache
     {
         $compress = (is_bool($data) || is_int($data) || is_float($data)) ? false : MEMCACHE_COMPRESSED;
 
-        if (!$this->_memcacheHandler->set($identifier, $data, $compress, $duration)) {
+        if ( ! $this->_memcacheHandler->set($identifier, $data, $compress, $duration)) {
             throw new \Exception('Failed to save data at the server');
         }
     }

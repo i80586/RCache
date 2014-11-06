@@ -163,7 +163,7 @@ class FileCache extends ICache
     public function beginProcess($identifier, $duration)
     {
         $this->_currentIdentifier = $this->getCacheHash($identifier);
-        $this->_currentDuration = !$duration ? self::UNLIMITED_DURATION : $duration;
+        $this->_currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
 
         if (false === ($cacheData = $this->readData($this->_cacheDir . $this->_currentIdentifier))) {
             return false;
