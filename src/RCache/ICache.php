@@ -26,7 +26,7 @@ abstract class ICache
     protected $_currentDuration;
 
     /**
-     * Save data in cache
+     * Cache data
      * 
      * @param string $identifier
      * @param mixed $data
