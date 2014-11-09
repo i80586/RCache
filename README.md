@@ -39,8 +39,6 @@ require 'vendor/autoload.php';
 
 ## Examples
 
-### Data caching:
-
 #### File cache (manually cache)
 
 ```php
