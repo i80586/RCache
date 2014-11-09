@@ -4,7 +4,7 @@ namespace RCache;
 
 /**
  * FileCache class file
- * Simple class for file caching
+ * Class for caching in files
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
  * @date 6 November 2013
@@ -18,29 +18,10 @@ class FileCache extends ICache
     const UNLIMITED_DURATION = 31104000;
 
     /**
-     * Error constants
-     */
-    const ERR_DELETE_FILE = 0x3;
-
-    /**
      * Cache folder
      * @property string
      */
     protected $_cacheDir;
-
-    /**
-     * Temporary cache identifier
-     * 
-     * @property string 
-     */
-    protected $_currentIdentifier;
-
-    /**
-     * Temporary cache duration 
-     * 
-     * @property integer 
-     */
-    protected $_currentDuration;
 
     /**
      * Class constructor
@@ -49,7 +30,10 @@ class FileCache extends ICache
      */
     public function __construct($cacheDir)
     {
-        $this->_cacheDir = ($cacheDir[strlen($cacheDir) - 1] != DIRECTORY_SEPARATOR) ? ($cacheDir . DIRECTORY_SEPARATOR) : $cacheDir;
+        if ($cacheDir[mb_strlen($cacheDir, 'utf-8') - 1] != DIRECTORY_SEPARATOR) {
+            $cacheDir = $cacheDir . DIRECTORY_SEPARATOR;
+        }
+        $this->_cacheDir = $cacheDir;
     }
 
     /**
@@ -70,20 +54,18 @@ class FileCache extends ICache
      */
     protected function readData($filename)
     {
-        $output = false;
-
         if (is_file($filename)) {
             $fileContent = file_get_contents($filename);
             $expireTime = substr($fileContent, 0, 11);
 
             if ($expireTime > time()) {
-                $output = unserialize(substr($fileContent, 10));
+                return unserialize(substr($fileContent, 10));
             } else {
                 unlink($filename);
             }
         }
 
-        return $output;
+        return false;
     }
 
     /**
@@ -99,7 +81,7 @@ class FileCache extends ICache
     }
 
     /**
-     * Remove cache data
+     * Remove cache
      * 
      * @param string $filename
      * @return boolean
@@ -107,14 +89,13 @@ class FileCache extends ICache
     protected function removeData($filename)
     {
         if (is_file($filename)) {
-            unlink($filename);
+            return unlink($filename);
         }
-
         return true;
     }
 
     /**
-     * Save data in cache
+     * Cache data
      * 
      * @param string $identifier
      * @param mixed $data
@@ -123,7 +104,7 @@ class FileCache extends ICache
      */
     public function set($identifier, $data, $duration = 0)
     {
-        if (!$duration) {
+        if ( ! $duration) {
             $duration = self::UNLIMITED_DURATION;
         }
 
@@ -131,7 +112,8 @@ class FileCache extends ICache
     }
 
     /**
-     * Load data
+     * Get cached data
+     * Returns mixed data if exist and FALSE if data are not exists
      * 
      * @param string $identifier
      * @return mixed
@@ -143,7 +125,7 @@ class FileCache extends ICache
 
     /**
      * Remove cache by identifier
-     * Return true if file deleted and false if file not exists
+     * Returns true if file deleted and false if file not exists
      * 
      * @param string $identifier
      * @return boolean
@@ -184,6 +166,7 @@ class FileCache extends ICache
 
     /**
      * Generates cache hash
+     * Generates hash by cache identifier
      * 
      * @param string $identifier
      * @return string
