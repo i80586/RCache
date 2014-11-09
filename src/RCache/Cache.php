@@ -23,7 +23,7 @@ class Cache
      * 
      * @var array 
      */
-    protected static $_availableTypes = [
+    static protected $_availableTypes = [
         'file' => 'FileCache',
         'memory' => 'MemCache'
     ];
@@ -36,7 +36,7 @@ class Cache
      */
     public function __construct($cacheType, array $args = [])
     {
-        $this->_cacheHandler = ($cacheType instanceof ICache) ? $cacheType : self::getCacheClass($cacheType, $args);
+        $this->_cacheHandler = ($cacheType instanceof ICache) ? $cacheType : self::getInstance($cacheType, $args);
     }
 
     /**
@@ -47,7 +47,7 @@ class Cache
      * @return ICache
      * @throws \Exception
      */
-    protected static function getCacheClass($type, array $args = [])
+    static protected function getInstance($type, array $args = [])
     {
         if ( ! array_key_exists($type, self::$_availableTypes)) {
             throw new \Exception('Cache type not found');
@@ -109,7 +109,7 @@ class Cache
     }
 
     /**
-     * End reading from buffer and save to cache
+     * Cache catched content
      */
     public function end()
     {
