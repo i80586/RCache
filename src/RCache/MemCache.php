@@ -4,7 +4,7 @@ namespace RCache;
 
 /**
  * MemCache class file
- * Simple class for caching in memory cache
+ * Class for caching in memory
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
  * @date 26 October 2014
