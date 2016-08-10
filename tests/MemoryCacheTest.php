@@ -9,14 +9,22 @@
  */
 class MemoryCacheTest extends PHPUnit_Framework_TestCase
 {
-    
+    /**
+     * @var RCache\Cache 
+     */
     private $cacheHandler;
     
+    /**
+     * Init test
+     */
     public function setUp()
     {
         $this->cacheHandler = new RCache\Cache(new \RCache\MemCache());
     }
     
+    /**
+     * Test set and get value
+     */
     public function testSet()
     {
         $this->cacheHandler->set('test-identifier', 'test-value', 120);
@@ -24,6 +32,9 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test-value', $this->cacheHandler->get('test-identifier'));
     }
     
+    /**
+     * Test deleting value
+     */
     public function testDelete()
     {
         $this->cacheHandler->drop('test-value');
