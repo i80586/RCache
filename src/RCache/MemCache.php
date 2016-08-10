@@ -15,7 +15,7 @@ class MemCache extends ICache
     /**
      * Memecache handler
      * 
-     * @var Memcache 
+     * @var \Memcache 
      */
     protected $_memcacheHandler = null;
 
@@ -71,6 +71,17 @@ class MemCache extends ICache
     public function drop($identifier)
     {
         return $this->_memcacheHandler->delete($identifier);
+    }
+
+    /**
+     * Check if cache exists in memcache
+     * 
+     * @param string $identifier
+     * @return boolean
+     */
+    public function has($identifier)
+    {
+        return false !== $this->get($identifier);
     }
 
     /**
