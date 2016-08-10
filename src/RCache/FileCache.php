@@ -114,7 +114,7 @@ class FileCache extends ICache
     /**
      * Get cached data
      * Returns mixed data if exist and FALSE if data are not exists
-     * 
+     *
      * @param string $identifier
      * @return mixed
      */
@@ -126,7 +126,7 @@ class FileCache extends ICache
     /**
      * Remove cache by identifier
      * Returns true if file deleted and false if file not exists
-     * 
+     *
      * @param string $identifier
      * @return boolean
      */
@@ -136,8 +136,19 @@ class FileCache extends ICache
     }
 
     /**
-     * Get content from cache
+     * Check if cache exists in filecache
      * 
+     * @param string $identifier
+     * @return boolean
+     */
+    public function has($identifier)
+    {
+        return false !== $this->get($identifier);
+    }
+
+    /**
+     * Get content from cache
+     *
      * @param string $identifier
      * @param boolean|integer $duration
      * @return mixed
@@ -156,7 +167,7 @@ class FileCache extends ICache
 
     /**
      * Write catched data
-     * 
+     *
      * @param string $data
      */
     public function endProcess($data)
@@ -167,7 +178,7 @@ class FileCache extends ICache
     /**
      * Generates cache hash
      * Generates hash by cache identifier
-     * 
+     *
      * @param string $identifier
      * @return string
      */
