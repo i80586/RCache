@@ -8,4 +8,4 @@ php:
 services:
     memcached
   
-script: phpunit --bootstrap bootstrap.php  MemoryCacheTest.php
+script: phpunit --bootstrap tests/bootstrap.php tests/MemoryCacheTest.php
