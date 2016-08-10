@@ -6,7 +6,7 @@ namespace RCache;
  * Cache handler
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 17 December 2013
+ * @date 17 December, 2013
  */
 class Cache
 {
