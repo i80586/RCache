@@ -30,13 +30,15 @@ class Cache
 
     /**
      * Class construction
-     * 
+     *
      * @param ICache|string $cacheType
      * @param array $args
      */
     public function __construct($cacheType, array $args = [])
     {
-        $this->_cacheHandler = ($cacheType instanceof ICache) ? $cacheType : self::getInstance($cacheType, $args);
+        $this->_cacheHandler = ($cacheType instanceof ICache) 
+                                ? $cacheType 
+        						: self::getInstance($cacheType, $args);
     }
 
     /**
@@ -69,13 +71,13 @@ class Cache
     }
 
     /**
-     * Save data
-     * 
+     * Save data in cache
+     *
      * @param string $identifier
      * @param mixed $data
      * @param integer $duration
      */
-    public function set($identifier, $data, $duration)
+    public function set($identifier, $data, $duration = 0)
     {
         $this->_cacheHandler->set($identifier, $data, $duration);
     }
@@ -89,6 +91,17 @@ class Cache
     public function drop($identifier)
     {
         return $this->_cacheHandler->drop($identifier);
+    }
+
+    /**
+     * Check if cache exists
+     *
+     * @param string $identifier
+     * @return boolean
+     */
+    public function has($identifier)
+    {
+        return $this->_cacheHandler->has($identifier);
     }
 
     /**
