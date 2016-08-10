@@ -47,5 +47,12 @@ abstract class ICache
      * @param string $identifier
      */
     abstract public function drop($identifier);
-    
+
+    /**
+     * Check if cache exists
+     * 
+     * @param string $identifier
+     */
+    abstract public function has($identifier);
+
 }
