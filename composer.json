@@ -1,0 +1,21 @@
+{
+    "name": "i80586/rcache"
+  , "type": "library"
+  , "description": "Simple caching library"
+  , "keywords": ["Cache", "File", "Memory"]
+  , "authors": [
+        {
+            "name": "Rasim Ashurov"
+          , "email": "rasim.ashurov@gmail.com"
+          , "role": "Developer"
+        }
+    ]
+  , "autoload": {
+        "psr-0": {
+            "RCache": "src"
+        }
+    }
+  , "require": {
+       "ext-memcache": "*"
+    }
+}
