@@ -7,7 +7,7 @@ namespace RCache;
  * Class for caching in memory
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 26 October 2014
+ * @date 26 October, 2014
  */
 class MemCache extends ICache
 {

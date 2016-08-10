@@ -7,7 +7,7 @@ namespace RCache;
  * Abstraction of cache classes
  * 
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 17 November 2013
+ * @date 17 November, 2013
  */
 abstract class ICache
 {

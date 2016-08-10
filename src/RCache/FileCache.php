@@ -7,7 +7,7 @@ namespace RCache;
  * Class for caching in files
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 6 November 2013
+ * @date 6 November, 2013
  */
 class FileCache extends ICache
 {
