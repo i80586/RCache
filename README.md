@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/i80586/RCache.svg?branch=master)](https://travis-ci.org/i80586/RCache)
+
 # RCache
 <p>Simple PHP class for caching data in files and memory</p>
 
