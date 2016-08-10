@@ -1,9 +1,11 @@
 <?php
 
 /**
- * Description of MemoryCacheTest
+ * MemoryCacheTest tests class
+ * Test cache for memory
  *
- * @author Rasim
+ * @author Rasim Ashurov <rasim.ashurov@gmail.com>
+ * @date 10 August, 2016
  */
 class MemoryCacheTest extends PHPUnit_Framework_TestCase
 {
