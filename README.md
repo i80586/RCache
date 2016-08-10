@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/i80586/RCache.svg?branch=master)](https://travis-ci.org/i80586/RCache)
 
-<p>Simple PHP class for caching data in files and memory</p>
+<p>Simple PHP library for caching data in files and memory</p>
 
 ### Installing via Composer
 
