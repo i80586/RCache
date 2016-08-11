@@ -1,5 +1,8 @@
 <?php
 
+use RCache\Cache;
+use RCache\MemCache;
+
 /**
  * MemoryCacheTest tests class
  * Test cache for memory
@@ -12,34 +15,72 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
     /**
      * @var RCache\Cache 
      */
-    private $cacheHandler;
+    private $cache;
     
     /**
      * Init test
      */
     public function setUp()
     {
-        $this->cacheHandler = new RCache\Cache(new \RCache\MemCache());
+        $this->cache = new Cache(new MemCache());
     }
     
     /**
      * Test set and get value
      */
-    public function testSet()
+    public function testManually()
     {
-        $this->cacheHandler->set('test-identifier', 'test-value', 120);
+        $this->cache->set('test-identifier', 'test-value', 120);
         
-        $this->assertEquals('test-value', $this->cacheHandler->get('test-identifier'));
+        # assert existing cache and equal value
+        $this->assertEquals('test-value', $this->cache->get('test-identifier'));
     }
     
     /**
-     * Test deleting value
+     * Test fragment cache
+     */
+    public function testFragment()
+    {
+        # write content to cache
+        if ($this->cache->start('test-fragment', 120)) {
+            
+            echo 'test-fragment-content';
+            
+            $this->cache->end(); }
+        
+        # test fragment cache
+        if ($this->cache->start('test-fragment', 120)) {
+            
+            $this->assertTrue(false);
+            
+            $this->cache->end(); }
+    }
+    
+    /**
+     * Test cache expire / duration
+     */
+    public function testCacheExpire()
+    {
+        $this->cache->set('test-expire', 'test-value', 2);
+        
+        # assert existing cache
+        $this->assertTrue($this->cache->has('test-expire'));
+        
+        sleep(3);
+        
+        # assert for expire cache
+        $this->assertFalse($this->cache->has('test-expire'));
+    }
+    
+    /**
+     * Test deleting cache
      */
     public function testDelete()
     {
-        $this->cacheHandler->drop('test-value');
-        
-        $this->assertFalse($this->cacheHandler->has('test-value'));
+        foreach (['test-identifier', 'test-fragment'] as $identifier) {
+            $this->cache->drop($identifier);
+            $this->assertFalse($this->cache->has($identifier));
+        }        
     }
     
 }
