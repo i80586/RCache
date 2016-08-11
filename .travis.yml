@@ -11,4 +11,4 @@ before_script:
     # enable memcache in travis ci
     echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   
-script: phpunit --bootstrap tests/bootstrap.php tests/MemoryCacheTest.php
+script: phpunit --bootstrap tests/bootstrap.php tests
