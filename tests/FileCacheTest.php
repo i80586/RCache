@@ -1,16 +1,16 @@
 <?php
 
 use RCache\Cache;
-use RCache\MemCache;
+use RCache\FileCache;
 
 /**
- * MemoryCacheTest tests class
- * Test cache for memory
+ * FileCacheTest tests class
+ * Test cache for file
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 10 August, 2016
+ * @date 11 August, 2016
  */
-class MemoryCacheTest extends PHPUnit_Framework_TestCase
+class FileCacheTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var RCache\Cache 
@@ -22,7 +22,12 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->cache = new Cache(new MemCache());
+        # create temporary directory for cache
+        if ( ! is_dir($directory = __DIR__ . '/cache')) {
+            mkdir($directory);
+        }
+        
+        $this->cache = new Cache(new FileCache($directory));
     }
     
     /**
