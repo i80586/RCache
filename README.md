@@ -1,6 +1,7 @@
 # RCache
 
 [![Build Status](https://travis-ci.org/i80586/RCache.svg?branch=master)](https://travis-ci.org/i80586/RCache)
+[![Total Downloads](https://poser.pugx.org/i80586/rcache/downloads.png)](https://packagist.org/packages/i80586/rcache)
 
 <p>Simple PHP library for caching data in files and memory</p>
 
