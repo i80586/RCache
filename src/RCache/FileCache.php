@@ -11,7 +11,7 @@ namespace RCache;
  */
 class FileCache extends ICache
 {
-    
+
     /**
      * Default cache duration (one year)
      */
@@ -21,29 +21,42 @@ class FileCache extends ICache
      * Cache folder
      * @property string
      */
-    protected $_cacheDir;
+    protected $cacheDir;
 
     /**
      * Class constructor
      * 
      * @param string $cacheDir
      */
-    public function __construct($cacheDir)
+    public function __construct($cacheDir = null)
+    {
+        # set cache directory
+        if (!empty($cacheDir)) {
+            $this->setCacheDir($cacheDir);
+        }
+    }
+
+    /**
+     * Set cache directory
+     * 
+     * @param string $cacheDir
+     */
+    public function setCacheDir($cacheDir)
     {
         if ($cacheDir[mb_strlen($cacheDir, 'utf-8') - 1] != DIRECTORY_SEPARATOR) {
             $cacheDir = $cacheDir . DIRECTORY_SEPARATOR;
         }
-        $this->_cacheDir = $cacheDir;
+        $this->cacheDir = $cacheDir;
     }
 
     /**
-     * Returns cache dir
+     * Returns cache directory
      * 
      * @return string
      */
     public function getCacheDir()
     {
-        return $this->_cacheDir;
+        return $this->cacheDir;
     }
 
     /**
@@ -54,7 +67,7 @@ class FileCache extends ICache
      */
     protected function readData($filename)
     {
-        if (is_file($filename)) {
+        if (is_file($filename) && is_readable($filename)) {
             $fileContent = file_get_contents($filename);
             $expireTime = substr($fileContent, 0, 11);
 
@@ -64,7 +77,6 @@ class FileCache extends ICache
                 unlink($filename);
             }
         }
-
         return false;
     }
 
@@ -77,6 +89,9 @@ class FileCache extends ICache
      */
     protected function writeData($filename, $data, $duration)
     {
+        if (!is_writable($directory = pathinfo($filename, PATHINFO_DIRNAME))) {
+            throw new \Exception('Directory "' . $directory . '" is not exists or writeable.');
+        }
         file_put_contents($filename, (time() + $duration) . serialize($data), LOCK_EX);
     }
 
@@ -108,7 +123,7 @@ class FileCache extends ICache
             $duration = self::UNLIMITED_DURATION;
         }
 
-        $this->writeData($this->_cacheDir . $this->getCacheHash($identifier), $data, $duration);
+        $this->writeData($this->getCacheDir() . $this->getCacheHash($identifier), $data, $duration);
     }
 
     /**
@@ -120,7 +135,7 @@ class FileCache extends ICache
      */
     public function get($identifier)
     {
-        return $this->readData($this->_cacheDir . $this->getCacheHash($identifier));
+        return $this->readData($this->getCacheDir() . $this->getCacheHash($identifier));
     }
 
     /**
@@ -132,7 +147,7 @@ class FileCache extends ICache
      */
     public function drop($identifier)
     {
-        return $this->removeData($this->_cacheDir . $this->getCacheHash($identifier));
+        return $this->removeData($this->getCacheDir() . $this->getCacheHash($identifier));
     }
 
     /**
@@ -143,7 +158,7 @@ class FileCache extends ICache
      */
     public function has($identifier)
     {
-        return false !== $this->get($identifier);
+        return (false !== $this->get($identifier));
     }
 
     /**
@@ -158,7 +173,7 @@ class FileCache extends ICache
         $this->_currentIdentifier = $this->getCacheHash($identifier);
         $this->_currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
 
-        if (false === ($cacheData = $this->readData($this->_cacheDir . $this->_currentIdentifier))) {
+        if (false === ($cacheData = $this->readData($this->getCacheDir() . $this->_currentIdentifier))) {
             return false;
         }
 
@@ -172,7 +187,7 @@ class FileCache extends ICache
      */
     public function endProcess($data)
     {
-        $this->writeData($this->_cacheDir . $this->_currentIdentifier, $data, $this->_currentDuration);
+        $this->writeData($this->getCacheDir() . $this->_currentIdentifier, $data, $this->_currentDuration);
     }
 
     /**
