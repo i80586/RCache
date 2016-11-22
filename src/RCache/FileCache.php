@@ -2,16 +2,17 @@
 
 namespace RCache;
 
+use \Exception as Exception;
+
 /**
- * FileCache class file
+ * FileCache class
  * Class for caching in files
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 6 November, 2013
+ * @date November 6, 2013
  */
-class FileCache extends ICache
+class FileCache extends AbstractCache
 {
-
     /**
      * Default cache duration (one year)
      */
@@ -19,34 +20,36 @@ class FileCache extends ICache
 
     /**
      * Cache folder
+     * 
      * @property string
      */
-    protected $cacheDir;
+    protected $cacheDirectory;
 
     /**
      * Class constructor
      * 
-     * @param string $cacheDir
+     * @param string $cacheDirectory
      */
-    public function __construct($cacheDir = null)
+    public function __construct($cacheDirectory = null)
     {
-        # set cache directory
-        if (!empty($cacheDir)) {
-            $this->setCacheDir($cacheDir);
-        }
+        $this->setCacheDir($cacheDirectory);
     }
 
     /**
      * Set cache directory
      * 
-     * @param string $cacheDir
+     * @param string $cacheDirectory
      */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir($cacheDirectory)
     {
-        if ($cacheDir[mb_strlen($cacheDir, 'utf-8') - 1] != DIRECTORY_SEPARATOR) {
-            $cacheDir = $cacheDir . DIRECTORY_SEPARATOR;
+        if (!is_scalar($cacheDirectory)) {
+            return;
         }
-        $this->cacheDir = $cacheDir;
+        
+        if (substr($cacheDirectory, -1) != DIRECTORY_SEPARATOR) {
+            $cacheDirectory .= DIRECTORY_SEPARATOR;
+        }
+        $this->cacheDirectory = $cacheDirectory;
     }
 
     /**
@@ -56,7 +59,7 @@ class FileCache extends ICache
      */
     public function getCacheDir()
     {
-        return $this->cacheDir;
+        return $this->cacheDirectory;
     }
 
     /**
@@ -90,13 +93,13 @@ class FileCache extends ICache
     protected function writeData($filename, $data, $duration)
     {
         if (!is_writable($directory = pathinfo($filename, PATHINFO_DIRNAME))) {
-            throw new \Exception('Directory "' . $directory . '" is not exists or writeable.');
+            throw new Exception('Directory "' . $directory . '" is not exists or writeable.');
         }
         file_put_contents($filename, (time() + $duration) . serialize($data), LOCK_EX);
     }
 
     /**
-     * Remove cache
+     * Remove cache file
      * 
      * @param string $filename
      * @return boolean
@@ -115,11 +118,11 @@ class FileCache extends ICache
      * @param string $identifier
      * @param mixed $data
      * @param integer $duration
-     * @throws \Exception
+     * @throws Exception
      */
     public function set($identifier, $data, $duration = 0)
     {
-        if ( ! $duration) {
+        if (!$duration) {
             $duration = self::UNLIMITED_DURATION;
         }
 
@@ -170,10 +173,10 @@ class FileCache extends ICache
      */
     public function beginProcess($identifier, $duration)
     {
-        $this->_currentIdentifier = $this->getCacheHash($identifier);
-        $this->_currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
+        $this->currentIdentifier = $this->getCacheHash($identifier);
+        $this->currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
 
-        if (false === ($cacheData = $this->readData($this->getCacheDir() . $this->_currentIdentifier))) {
+        if (false === ($cacheData = $this->readData($this->getCacheDir() . $this->currentIdentifier))) {
             return false;
         }
 
@@ -187,7 +190,7 @@ class FileCache extends ICache
      */
     public function endProcess($data)
     {
-        $this->writeData($this->getCacheDir() . $this->_currentIdentifier, $data, $this->_currentDuration);
+        $this->writeData($this->getCacheDir() . $this->currentIdentifier, $data, $this->currentDuration);
     }
 
     /**
