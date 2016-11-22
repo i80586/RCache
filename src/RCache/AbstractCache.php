@@ -3,30 +3,32 @@
 namespace RCache;
 
 /**
- * ICache class file
- * Abstraction of cache classes
+ * AbstractCache class file
+ * Abstrac cache class
  * 
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 17 November, 2013
+ * @date November 17, 2013
  */
-abstract class ICache
+abstract class AbstractCache
 {
     /**
      * Temporary cache identifier
+     * (uses in fragment cache)
      * 
      * @property string 
      */
-    protected $_currentIdentifier;
+    protected $currentIdentifier;
 
     /**
      * Temporary cache duration 
+     * (uses in fragment cache)
      * 
      * @property integer 
      */
-    protected $_currentDuration;
+    protected $currentDuration;
 
     /**
-     * Cache data
+     * Set cache
      * 
      * @param string $identifier
      * @param mixed $data
@@ -49,7 +51,7 @@ abstract class ICache
     abstract public function drop($identifier);
 
     /**
-     * Check if cache exists
+     * Check is cache exists
      * 
      * @param string $identifier
      */
