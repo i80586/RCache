@@ -2,35 +2,37 @@
 
 namespace RCache;
 
+use \Exception as Exception;
+use \Memcache as PeclMemcache;
+
 /**
- * MemCache class file
+ * MemCache class
  * Class for caching in memory
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 26 October, 2014
+ * @date October 26, 2014
  */
-class MemCache extends ICache
+class MemCache extends AbstractCache
 {
-
     /**
      * Memecache handler
      * 
-     * @var \Memcache 
+     * @property PeclMemcache 
      */
-    protected $_memcacheHandler = null;
+    protected $memcacheHandler = null;
 
     /**
      * Class constructor
      * 
      * @param string $hostname
      * @param string $port
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($hostname = '127.0.0.1', $port = '11211')
     {
-        $this->_memcacheHandler = new \Memcache();
-        if ( ! $this->_memcacheHandler->connect($hostname, $port)) {
-            throw new \Exception("Could not connect to server. Connection information: {$hostname}:{$port}");
+        $this->memcacheHandler = new PeclMemcache();
+        if ( ! $this->memcacheHandler->connect($hostname, $port)) {
+            throw new Exception("Could not connect to server. Connection information: {$hostname}:{$port}");
         }
     }
 
@@ -42,7 +44,7 @@ class MemCache extends ICache
      */
     public function get($identifier)
     {
-        return $this->_memcacheHandler->get($identifier);
+        return $this->memcacheHandler->get($identifier);
     }
 
     /**
@@ -51,14 +53,14 @@ class MemCache extends ICache
      * @param string $identifier
      * @param mixed $data
      * @param boolean|integer $duration
-     * @throws \Exception
+     * @throws Exception
      */
     public function set($identifier, $data, $duration = 0)
     {
         $compress = (is_bool($data) || is_int($data) || is_float($data)) ? false : MEMCACHE_COMPRESSED;
 
-        if ( ! $this->_memcacheHandler->set($identifier, $data, $compress, $duration)) {
-            throw new \Exception('Failed to save data at the server');
+        if (!$this->memcacheHandler->set($identifier, $data, $compress, $duration)) {
+            throw new Exception('Failed to save data at the server');
         }
     }
 
@@ -70,7 +72,7 @@ class MemCache extends ICache
      */
     public function drop($identifier)
     {
-        return $this->_memcacheHandler->delete($identifier);
+        return $this->memcacheHandler->delete($identifier);
     }
 
     /**
@@ -88,15 +90,15 @@ class MemCache extends ICache
      * Get content from cache
      * 
      * @param string $identifier
-     * @param string $duration
+     * @param integer $duration
      * @return mixed
      */
     public function beginProcess($identifier, $duration = 0)
     {
-        $this->_currentIdentifier = $identifier;
-        $this->_currentDuration = $duration;
+        $this->currentIdentifier = $identifier;
+        $this->currentDuration = $duration;
 
-        if (false === ($cacheData = $this->get($this->_currentIdentifier))) {
+        if (false === ($cacheData = $this->get($this->currentIdentifier))) {
             return false;
         }
 
@@ -110,7 +112,7 @@ class MemCache extends ICache
      */
     public function endProcess($data)
     {
-        $this->set($this->_currentIdentifier, $data, $this->_currentDuration);
+        $this->set($this->currentIdentifier, $data, $this->currentDuration);
     }
 
 }
