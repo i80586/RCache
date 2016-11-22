@@ -2,41 +2,42 @@
 
 namespace RCache;
 
+use \Exception as Exception;
+
 /**
  * Cache handler
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 17 December, 2013
+ * @date December 17, 2013
  */
 class Cache
 {
-
     /**
      * Cache handler
      * 
-     * @var ICache
+     * @property AbstractCache
      */
-    protected $_cacheHandler = null;
+    protected $cacheHandler = null;
 
     /**
      * Available cache types
      * 
-     * @var array 
+     * @property array 
      */
-    static protected $_availableTypes = [
-        'file' => 'FileCache',
-        'memory' => 'MemCache'
-    ];
+    static protected $availableTypes = [
+            'file' => 'FileCache',
+            'memory' => 'MemCache'
+        ];
 
     /**
      * Class construction
      *
-     * @param ICache|string $cacheType
+     * @param AbstractCache|string $cacheType
      * @param array $args
      */
     public function __construct($cacheType, array $args = [])
     {
-        $this->_cacheHandler = ($cacheType instanceof ICache) 
+        $this->cacheHandler = ($cacheType instanceof AbstractCache) 
                                 ? $cacheType 
         						: self::getInstance($cacheType, $args);
     }
@@ -46,16 +47,16 @@ class Cache
      * 
      * @param string $type
      * @param array $args
-     * @return ICache
-     * @throws \Exception
+     * @return AbstractCache
+     * @throws Exception
      */
     static protected function getInstance($type, array $args = [])
     {
-        if ( ! array_key_exists($type, self::$_availableTypes)) {
-            throw new \Exception('Cache type not found');
+        if (!array_key_exists($type, self::$availableTypes)) {
+            throw new Exception('Cache type not found');
         }
 
-        $className = __NAMESPACE__ . '\\' . self::$_availableTypes[$type];
+        $className = __NAMESPACE__ . '\\' . self::$availableTypes[$type];
         return (new \ReflectionClass($className))->newInstanceArgs($args);
     }
 
@@ -67,7 +68,7 @@ class Cache
      */
     public function get($identifier)
     {
-        return $this->_cacheHandler->get($identifier);
+        return $this->cacheHandler->get($identifier);
     }
 
     /**
@@ -79,7 +80,7 @@ class Cache
      */
     public function set($identifier, $data, $duration = 0)
     {
-        $this->_cacheHandler->set($identifier, $data, $duration);
+        $this->cacheHandler->set($identifier, $data, $duration);
     }
 
     /**
@@ -90,7 +91,7 @@ class Cache
      */
     public function drop($identifier)
     {
-        return $this->_cacheHandler->drop($identifier);
+        return $this->cacheHandler->drop($identifier);
     }
 
     /**
@@ -101,7 +102,7 @@ class Cache
      */
     public function has($identifier)
     {
-        return $this->_cacheHandler->has($identifier);
+        return $this->cacheHandler->has($identifier);
     }
 
     /**
@@ -113,7 +114,7 @@ class Cache
      */
     public function start($identifier, $duration = false)
     {
-        if (false === ($cacheData = $this->_cacheHandler->beginProcess($identifier, $duration))) {
+        if (false === ($cacheData = $this->cacheHandler->beginProcess($identifier, $duration))) {
             return ob_start();
         } else {
             echo $cacheData;
@@ -126,7 +127,7 @@ class Cache
      */
     public function end()
     {
-        $this->_cacheHandler->endProcess(ob_get_contents());
+        $this->cacheHandler->endProcess(ob_get_contents());
 
         ob_flush();
         ob_end_clean();
