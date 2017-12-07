@@ -13,24 +13,57 @@ class MemCache extends ICache
 {
 
     /**
-     * Memecache handler
+     * Memecache\Memcached handler
      * 
      * @var \Memcache 
      */
-    protected $_memcacheHandler = null;
+    protected $cache = null;
+    /**
+     * @var string
+     */
+    public $hostname;
+    /**
+     * @var integer
+     */
+    public $post;
+    /**
+     * @var boolean
+     */
+    public $useMemcached = false;
 
     /**
      * Class constructor
      * 
+     * @param boolean $useMemcached
      * @param string $hostname
      * @param string $port
      * @throws \Exception
      */
-    public function __construct($hostname = '127.0.0.1', $port = '11211')
+    public function __construct($useMemcached = false, $hostname = '127.0.0.1', $port = '11211')
     {
-        $this->_memcacheHandler = new \Memcache();
-        if ( ! $this->_memcacheHandler->connect($hostname, $port)) {
-            throw new \Exception("Could not connect to server. Connection information: {$hostname}:{$port}");
+        $this->useMemcached = $useMemcached;
+        $this->hostname = $hostname;
+        $this->port = $port;
+
+        $this->connect();
+    }
+
+    public function connect()
+    {
+        $this->cache = ($this->useMemcached) ? new \Memcached() : new \Memcache();
+        if (!$this->cache->addserver($this->hostname, $this->port)) {
+            throw new \Exception("Could not connect to server. Connection information: {$this->hostname}:{$this->port}");
+        }
+
+        $this->setCompressOptions();
+    }
+
+    public function setCompressOptions()
+    {
+        if ($this->useMemcached) {
+            $this->cache->setOption(\Memcached::OPT_COMPRESSION, true);
+        } else {
+            $this->cache->setCompressThreshold(20000, 1);
         }
     }
 
@@ -42,7 +75,7 @@ class MemCache extends ICache
      */
     public function get($identifier)
     {
-        return $this->_memcacheHandler->get($identifier);
+        return $this->cache->get($identifier);
     }
 
     /**
@@ -55,9 +88,10 @@ class MemCache extends ICache
      */
     public function set($identifier, $data, $duration = 0)
     {
-        $compress = (is_bool($data) || is_int($data) || is_float($data)) ? false : MEMCACHE_COMPRESSED;
-
-        if ( ! $this->_memcacheHandler->set($identifier, $data, $compress, $duration)) {
+        $savedSuccessfully = $this->useMemcached 
+                                ? $this->cache->set($identifier, $data, $duration) 
+                                : $this->cache->set($identifier, $data, 0, $duration);
+        if (!$savedSuccessfully) {
             throw new \Exception('Failed to save data at the server');
         }
     }
@@ -70,7 +104,7 @@ class MemCache extends ICache
      */
     public function drop($identifier)
     {
-        return $this->_memcacheHandler->delete($identifier);
+        return $this->cache->delete($identifier);
     }
 
     /**
@@ -93,10 +127,10 @@ class MemCache extends ICache
      */
     public function beginProcess($identifier, $duration = 0)
     {
-        $this->_currentIdentifier = $identifier;
-        $this->_currentDuration = $duration;
+        $this->currentIdentifier = $identifier;
+        $this->currentDuration = $duration;
 
-        if (false === ($cacheData = $this->get($this->_currentIdentifier))) {
+        if (false === ($cacheData = $this->get($this->currentIdentifier))) {
             return false;
         }
 
@@ -110,7 +144,7 @@ class MemCache extends ICache
      */
     public function endProcess($data)
     {
-        $this->set($this->_currentIdentifier, $data, $this->_currentDuration);
+        $this->set($this->currentIdentifier, $data, $this->currentDuration);
     }
 
 }
