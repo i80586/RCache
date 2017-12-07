@@ -170,10 +170,10 @@ class FileCache extends ICache
      */
     public function beginProcess($identifier, $duration)
     {
-        $this->_currentIdentifier = $this->getCacheHash($identifier);
-        $this->_currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
+        $this->currentIdentifier = $this->getCacheHash($identifier);
+        $this->currentDuration = $duration ? $duration : self::UNLIMITED_DURATION;
 
-        if (false === ($cacheData = $this->readData($this->getCacheDir() . $this->_currentIdentifier))) {
+        if (false === ($cacheData = $this->readData($this->getCacheDir() . $this->currentIdentifier))) {
             return false;
         }
 
@@ -187,7 +187,7 @@ class FileCache extends ICache
      */
     public function endProcess($data)
     {
-        $this->writeData($this->getCacheDir() . $this->_currentIdentifier, $data, $this->_currentDuration);
+        $this->writeData($this->getCacheDir() . $this->currentIdentifier, $data, $this->currentDuration);
     }
 
     /**
