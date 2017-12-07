@@ -16,92 +16,24 @@ class Cache
      * 
      * @var ICache
      */
-    protected $_cacheHandler = null;
-
-    /**
-     * Available cache types
-     * 
-     * @var array 
-     */
-    static protected $_availableTypes = [
-        'file' => 'FileCache',
-        'memory' => 'MemCache'
-    ];
+    protected $cacheHandler = null;
 
     /**
      * Class construction
      *
-     * @param ICache|string $cacheType
+     * @param ICache $handler
      * @param array $args
      */
-    public function __construct($cacheType, array $args = [])
+    public function __construct(ICache $handler)
     {
-        $this->_cacheHandler = ($cacheType instanceof ICache) 
-                                ? $cacheType 
-        						: self::getInstance($cacheType, $args);
+        $this->cacheHandler = $handler;
     }
 
-    /**
-     * Get cache class by type
-     * 
-     * @param string $type
-     * @param array $args
-     * @return ICache
-     * @throws \Exception
-     */
-    static protected function getInstance($type, array $args = [])
+    public function __call($name, $arguments)
     {
-        if ( ! array_key_exists($type, self::$_availableTypes)) {
-            throw new \Exception('Cache type not found');
+        if (method_exists($this->cacheHandler, $name)) {
+            return call_user_func_array([$this->cacheHandler, $name], $arguments);
         }
-
-        $className = __NAMESPACE__ . '\\' . self::$_availableTypes[$type];
-        return (new \ReflectionClass($className))->newInstanceArgs($args);
-    }
-
-    /**
-     * Get cache by identifier
-     * 
-     * @param string $identifier
-     * @return mixed
-     */
-    public function get($identifier)
-    {
-        return $this->_cacheHandler->get($identifier);
-    }
-
-    /**
-     * Save data in cache
-     *
-     * @param string $identifier
-     * @param mixed $data
-     * @param integer $duration
-     */
-    public function set($identifier, $data, $duration = 0)
-    {
-        $this->_cacheHandler->set($identifier, $data, $duration);
-    }
-
-    /**
-     * Remove data from cache by identifier
-     * 
-     * @param string $identifier
-     * @return boolean
-     */
-    public function drop($identifier)
-    {
-        return $this->_cacheHandler->drop($identifier);
-    }
-
-    /**
-     * Check if cache exists
-     *
-     * @param string $identifier
-     * @return boolean
-     */
-    public function has($identifier)
-    {
-        return $this->_cacheHandler->has($identifier);
     }
 
     /**
