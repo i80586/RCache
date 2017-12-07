@@ -16,14 +16,14 @@ abstract class ICache
      * 
      * @property string 
      */
-    protected $_currentIdentifier;
+    protected $currentIdentifier;
 
     /**
      * Temporary cache duration 
      * 
      * @property integer 
      */
-    protected $_currentDuration;
+    protected $currentDuration;
 
     /**
      * Cache data
