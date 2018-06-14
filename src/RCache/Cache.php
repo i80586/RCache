@@ -12,19 +12,15 @@ class Cache
 {
 
     /**
-     * Cache handler
-     * 
-     * @var ICache
+     * @var CacheInterface
      */
     protected $cacheHandler = null;
 
     /**
-     * Class construction
-     *
-     * @param ICache $handler
+     * @param CacheInterface $handler
      * @param array $args
      */
-    public function __construct(ICache $handler)
+    public function __construct(CacheInterface $handler)
     {
         $this->cacheHandler = $handler;
     }
