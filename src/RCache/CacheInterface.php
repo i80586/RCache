@@ -3,56 +3,34 @@
 namespace RCache;
 
 /**
- * ICache class file
- * Abstraction of cache classes
+ * CacheInterface interface 
+ * Template of cache realizations
  * 
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 17 November, 2013
+ * @date 14 June, 2018
  */
-abstract class ICache
+interface CacheInterface
 {
     /**
-     * Temporary cache identifier
-     * 
-     * @property string 
-     */
-    protected $currentIdentifier;
-
-    /**
-     * Temporary cache duration 
-     * 
-     * @property integer 
-     */
-    protected $currentDuration;
-
-    /**
-     * Cache data
-     * 
      * @param string $identifier
      * @param mixed $data
      * @param integer $duration
      */
-    abstract public function set($identifier, $data, $duration = 0);
+    public function set(string $identifier, $data, int $duration = 0);
 
     /**
-     * Get cache
-     * 
      * @param string $identifier
      */
-    abstract public function get($identifier);
+    public function get(string $identifier);
 
     /**
-     * Delete cache
-     * 
      * @param string $identifier
      */
-    abstract public function drop($identifier);
+    public function drop(string $identifier): bool;
 
     /**
-     * Check if cache exists
-     * 
      * @param string $identifier
      */
-    abstract public function has($identifier);
+    public function has(string $identifier): bool;
 
 }
