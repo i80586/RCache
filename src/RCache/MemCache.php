@@ -2,20 +2,26 @@
 
 namespace RCache;
 
+use \Memcache as SysMemCache;
+use \Memcached as SysMemCached;
+
 /**
  * MemCache class file
  * Class for caching in memory
  *
  * @author Rasim Ashurov <rasim.ashurov@gmail.com>
- * @date 26 October, 2014
+ * @date 14 June, 2018
  */
-class MemCache extends ICache
+class MemCache implements CacheInterface
 {
+
+    const TYPE_MEMCACHE = 1;
+    const TYPE_MEMCACHED = 2;
 
     /**
      * Memecache\Memcached handler
      * 
-     * @var \Memcache 
+     * @var \Memcache | \Memcached
      */
     protected $cache = null;
     /**
@@ -23,34 +29,33 @@ class MemCache extends ICache
      */
     public $hostname;
     /**
-     * @var integer
+     * @var int
      */
     public $post;
     /**
-     * @var boolean
+     * @var int
      */
-    public $useMemcached = false;
+    public $type;
 
     /**
      * Class constructor
      * 
-     * @param boolean $useMemcached
      * @param string $hostname
      * @param string $port
      * @throws \Exception
      */
-    public function __construct($useMemcached = false, $hostname = '127.0.0.1', $port = '11211')
+    public function __construct(int $type = self::TYPE_MEMCACHE, string $hostname = '127.0.0.1', int $port = 11211)
     {
-        $this->useMemcached = $useMemcached;
+        $this->type = $type;
         $this->hostname = $hostname;
         $this->port = $port;
-
-        $this->connect();
     }
 
     public function connect()
     {
-        $this->cache = ($this->useMemcached) ? new \Memcached() : new \Memcache();
+        $this->cache = $this->type == self::TYPE_MEMCACHE 
+                        ? new SysMemCache 
+                        : new SysMemCached();
         if (!$this->cache->addserver($this->hostname, $this->port)) {
             throw new \Exception("Could not connect to server. Connection information: {$this->hostname}:{$this->port}");
         }
